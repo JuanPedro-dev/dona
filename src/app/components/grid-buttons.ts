@@ -15,10 +15,14 @@ import { AacButton } from './aac-button';
   imports: [AacButton],
   template: `
     <div
-      class="flex flex-wrap  gap-8 px-3 py-2 bg-gray-100 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+      class="flex flex-wrap gap-8 px-3 py-4 overflow-x-auto scrollbar-hide">
       @for (word of words(); track word.id) {
         <app-aac-button
-          [button]="{ label: word.label, emoji: word.emoji ? word.emoji : '', color: word.backgroundColor }"
+          [button]="{
+            label: word.label,
+            emoji: word.emoji ? word.emoji : '',
+            color: word.backgroundColor,
+          }"
           [isEditMode]="isEditMode()" />
       } @empty {
         <div className="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
