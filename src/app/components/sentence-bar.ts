@@ -1,5 +1,7 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { SpeechService } from '@services/speech.service';
+import { ItemsStore } from '@store/word/items.store';
 
 @Component({
   selector: 'app-sentence-bar',
@@ -10,7 +12,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
       <!-- Sentence display -->
       <div
         class="flex-1 min-h-13 bg-gray-50 rounded-xl px-4 py-2 flex items-center gap-1 flex-wrap cursor-pointer border-2 border-gray-200 overflow-hidden"
-        (click)="speak.emit()"
+        (click)="speakOrStop()"
         title="Tap to speak sentence">
         @if (sentence().length === 0) {
           <span class="text-gray-400 text-lg select-none">
@@ -28,22 +30,22 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
       <!-- Speak button -->
       <button
-        (click)="speak.emit()"
+        (click)="speakOrStop()"
         [disabled]="sentence().length === 0"
         class="shrink-0 w-13 h-13 rounded-xl flex items-center justify-center text-2xl transition-all"
         [ngClass]="{
           'bg-gray-200 text-gray-400 cursor-not-allowed': sentence().length === 0,
-          'bg-green-500 text-white animate-pulse': sentence().length > 0 && isSpeaking(),
+          'bg-red-500 text-white animate-pulse': sentence().length > 0 && isSpeaking(),
           'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 shadow-md':
             sentence().length > 0 && !isSpeaking(),
         }"
         title="Speak sentence">
-        {{ isSpeaking() ? '🔊' : '▶️' }}
+        {{ isSpeaking() ? '⏸️' : '▶️' }}
       </button>
 
       <!-- Backspace -->
       <button
-        (click)="backspace.emit()"
+        (click)="removeLast()"
         [disabled]="sentence().length === 0"
         class="shrink-0 w-13 h-13 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl
         hover:bg-amber-600 active:scale-95 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-md"
@@ -53,7 +55,7 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
 
       <!-- Clear -->
       <button
-        (click)="clear.emit()"
+        (click)="clearSentence()"
         [disabled]="sentence().length === 0"
         class="shrink-0 w-13 h-13 rounded-xl bg-red-500 text-white flex items-center justify-center text-2xl
         hover:bg-red-600 active:scale-95 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-md"
@@ -64,11 +66,25 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
   `,
 })
 export class SentenceBar {
-  sentence = input<string[]>([]);
-  isSpeaking = input<boolean>(false);
+  private readonly itemsStore = inject(ItemsStore);
+  private readonly speechService = inject(SpeechService);
 
-  // ✅ Output signals (nuevo API) // refactor using the store service
-  speak = output<void>();
-  clear = output<void>();
-  backspace = output<void>();
+  protected readonly sentence = this.itemsStore.sentence;
+  protected readonly isSpeaking = this.speechService.isSpeaking;
+
+  clearSentence(): void {
+    this.itemsStore.clearSentence();
+  }
+
+  removeLast(): void {
+    this.itemsStore.removeLastSentence();
+  }
+
+  speakOrStop(): void {
+    if (this.speechService.isSpeaking()) {
+      this.speechService.stop();
+    } else {
+      this.speechService.speak(this.itemsStore.sentence().join(' '));
+    }
+  }
 }

@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  effect,
-  inject,
-  signal,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
 import { AacButton } from './aac-button';
 
@@ -14,10 +7,10 @@ import { AacButton } from './aac-button';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AacButton],
   template: `
-    <div
-      class="flex flex-wrap gap-8 px-3 py-4 overflow-x-auto scrollbar-hide">
+    <div class="flex flex-wrap gap-8 px-3 py-4 overflow-x-auto scrollbar-hide">
       @for (word of words(); track word.id) {
         <app-aac-button
+          (click)="selectWord(word.label)"
           [button]="{
             label: word.label,
             emoji: word.emoji ? word.emoji : '',
@@ -42,7 +35,7 @@ export class GridButtons {
   protected readonly words = this.itemsStore.words;
   isEditMode = signal(true);
 
-  selectWord(id: string | undefined): void {
-    // todo: animation
+  selectWord(word: string ): void {
+    this.itemsStore.addToSentence(word);
   }
 }

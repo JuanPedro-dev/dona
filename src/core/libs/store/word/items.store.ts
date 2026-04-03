@@ -144,12 +144,16 @@ export const ItemsStore = signalStore(
       // Sentence
       // ─────────────────────────────────────────────────────────────
       /** Add a sentence */
-      addSentence(sentence: string): void {
-        patchState(store, { sentence: [...store.sentence(), sentence] });
+      addToSentence(word: string): void {
+        patchState(store, { sentence: [...store.sentence(), word] });
       },
 
       removeLastSentence(): void {
         patchState(store, { sentence: store.sentence().slice(0, -1) });
+      },
+
+      clearSentence(): void {
+        patchState(store, { sentence: [] });
       },
 
       // Data lifecycle

@@ -41,7 +41,7 @@ export class SpeechService {
 
     const voices = speechSynth.getVoices();
     const preferredVoice = voices.find(
-      (v) => v.lang.startsWith('en') && v.localService
+      (v) => v.lang.startsWith('es') && v.localService
     );
     if (preferredVoice) {
       utterance.voice = preferredVoice;
