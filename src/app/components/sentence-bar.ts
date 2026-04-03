@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { SpeechService } from '@services/speech.service';
 import { ItemsStore } from '@store/word/items.store';
 
@@ -16,7 +16,7 @@ import { ItemsStore } from '@store/word/items.store';
         title="Tap to speak sentence">
         @if (sentence().length === 0) {
           <span class="text-gray-400 text-lg select-none">
-            Tap buttons to build a sentence...
+            Haz click en los botones para construir una oración...
           </span>
         } @else {
           @for (word of sentence(); track $index) {
