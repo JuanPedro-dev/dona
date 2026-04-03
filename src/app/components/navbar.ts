@@ -1,8 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
-  imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <header
       class="bg-linear-to-r from-indigo-600 to-purple-600 text-white px-4 py-2.5 flex items-center justify-between shadow-lg">

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import type { Item } from '@store/word/item.model';
+import type { Item } from 'src/core/libs/store/word/item.model';
 
 const DB_NAME = 'aac-board-db';
 const DB_VERSION = 1;

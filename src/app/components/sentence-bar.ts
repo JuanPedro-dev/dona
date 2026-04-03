@@ -1,8 +1,9 @@
 import { NgClass } from '@angular/common';
-import { Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 @Component({
-  selector: 'dona-sentence-bar',
+  selector: 'app-sentence-bar',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgClass],
   template: `
     <div class="flex items-center gap-2 bg-white border-b-2 border-gray-200 px-3 py-2 shadow-sm">

@@ -7,9 +7,9 @@
     "paths": {
       "@env/*": ["src/environments/*"],
       "@pages/*": ["src/app/pages/*"],
-      "@components/*": ["src/app/shared/components/*"],
+      "@components/*": ["src/app/components/*"],
       "@services/*": ["src/core/services/*"],
-      "@store/*": ["src/core/feature/store/*"],
+      "@store/*": ["src/core/libs/store/*"]
     },
     "outDir": "./out-tsc/app",
     "types": []

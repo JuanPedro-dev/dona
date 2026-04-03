@@ -1,11 +1,19 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 
-import { Navbar } from './shared/navbar';
-import { SentenceBar } from './shared/sentence-bar';
-import { ItemsStore } from '@store/word/items.store';
+import { Navbar } from '@components/navbar';
+import { SentenceBar } from '@components/sentence-bar';
+import { ItemsStore } from 'src/core/libs/store/word/items.store';
 
 @Component({
   selector: 'app-root',
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Navbar, SentenceBar],
   template: `
     <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
@@ -46,10 +54,10 @@ export class App {
   demoWords = ['I', 'want', 'water', 'please', 'thank', 'you', 'help', 'more'];
   initial = computed(() => this.wordStore.items());
 
-  list= effect(() => {
+  list = effect(() => {
     console.log('Current items in store:', this.initial());
   });
-  
+
   onSentenceChange(newSentence: string[]): void {
     this.sentence.set(newSentence);
   }
