@@ -1,23 +1,33 @@
-import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  effect,
+  inject,
+  signal,
+} from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
+import { AacButton } from './aac-button';
 
 @Component({
   selector: 'app-grid-buttons',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [AacButton],
   template: `
-    <h1>selectedFolderId: {{ selectedFolderId() }}</h1>
-    <h1>items: {{ buttons() }}</h1>
     <div
-      class="flex gap-1.5 px-3 py-2 bg-gray-100 border-b border-gray-200 overflow-x-auto scrollbar-hide">
-      @for (work of words(); track work.id) {
-        <button
-          type="button"
-          (click)="selectWord(work?.id)"
-          class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all">
-          <span class="text-lg">{{ work.emoji }}</span>
-          <span>{{ work.label }}</span>
-        </button>
+      class="flex flex-wrap  gap-8 px-3 py-2 bg-gray-100 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+      @for (word of words(); track word.id) {
+        <app-aac-button
+          [button]="{ label: word.label, emoji: word.emoji ? word.emoji : '', color: word.backgroundColor }"
+          [isEditMode]="isEditMode()" />
+      } @empty {
+        <div className="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
+          <div className="text-center">
+            <span className="text-5xl block mb-4">📭</span>
+            <p className="font-semibold">No buttons in this category</p>
+            <p className="text-sm mt-1">Tap the ⚙️ Settings button to add new buttons</p>
+          </div>
+        </div>
       }
     </div>
   `,
@@ -25,16 +35,8 @@ import { ItemsStore } from '@store/word/items.store';
 })
 export class GridButtons {
   protected readonly itemsStore = inject(ItemsStore);
-  protected readonly words = this.itemsStore.rootButtons;
-
-  selectedFolderId = computed(() => this.itemsStore.selectedFolderId());
-  buttons = computed(() => this.itemsStore.rootButtons());
-
-  test = effect(() => {
-    console.log('GridButtons - words changed:', this.words());
-    console.log('Item Store', this.itemsStore);
-    console.log('folder', this.itemsStore.selectedFolderId());
-  });
+  protected readonly words = this.itemsStore.words;
+  isEditMode = signal(true);
 
   selectWord(id: string | undefined): void {
     // todo: animation

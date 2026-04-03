@@ -133,7 +133,6 @@ export const ItemsStore = signalStore(
 
       /** Navigate into a folder */
       selectFolder(folderId: string): void {
-        console.warn({folderId});
         patchState(store, { selectedFolderId: folderId });
       },
 
