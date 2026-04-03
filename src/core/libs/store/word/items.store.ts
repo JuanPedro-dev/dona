@@ -10,11 +10,7 @@ import {
 
 import { IndexedDbService } from '@services/indexed-db.service';
 import { buildDefaultItems } from './default-items.data';
-import type {
-  CreateItemPayload,
-  Item,
-  UpdateItemPayload,
-} from './item.model';
+import type { CreateItemPayload, Item, UpdateItemPayload } from './item.model';
 
 // ── State interface ───────────────────────────────────────────────────────────
 
@@ -34,6 +30,11 @@ interface ItemsState {
   wordAdded: boolean;
   wordDeleted: boolean;
   wordUpdated: boolean;
+
+  /**
+   *
+   */
+  sentence: string[];
 }
 
 const initialState: ItemsState = {
@@ -44,6 +45,7 @@ const initialState: ItemsState = {
   wordAdded: false,
   wordDeleted: false,
   wordUpdated: false,
+  sentence: [],
 };
 
 // ── Store ─────────────────────────────────────────────────────────────────────
@@ -55,18 +57,28 @@ export const ItemsStore = signalStore(
 
   // ── Computed ────────────────────────────────────────────────────────────────
 
-  withComputed(({ items, selectedFolderId }) => ({
+  withComputed(({ items, selectedFolderId, sentence }) => ({
+    /** get sentence */
+    sentence: computed(() => sentence()),
+
     /** All folder items at root level, sorted by order */
     rootFolders: computed(() =>
       items()
-        .filter((i) => i.type === 'folder' && i.folderId === null)
+        .filter(i => i.type === 'folder' && i.folderId === null)
         .sort((a, b) => a.order - b.order),
     ),
 
     /** All button items at root level (quick-phrase buttons), sorted by order */
     rootButtons: computed(() =>
       items()
-        .filter((i) => i.type === 'button' && i.folderId === null)
+        .filter(i => i.type === 'button' && i.folderId === null)
+        .sort((a, b) => a.order - b.order),
+    ),
+
+    /** All button items at root level (quick-phrase buttons), sorted by order */
+    words: computed(() =>
+      items()
+        .filter(i => i.type === 'button' && i.folderId === selectedFolderId())
         .sort((a, b) => a.order - b.order),
     ),
 
@@ -75,7 +87,7 @@ export const ItemsStore = signalStore(
       const folderId = selectedFolderId();
       if (folderId === null) return [];
       return items()
-        .filter((i) => i.folderId === folderId)
+        .filter(i => i.folderId === folderId)
         .sort((a, b) => a.order - b.order);
     }),
 
@@ -83,17 +95,17 @@ export const ItemsStore = signalStore(
     currentFolder: computed(() => {
       const folderId = selectedFolderId();
       if (folderId === null) return null;
-      return items().find((i) => i.id === folderId && i.type === 'folder') ?? null;
+      return items().find(i => i.id === folderId && i.type === 'folder') ?? null;
     }),
 
     /** Whether the store has been populated at all */
     isEmpty: computed(() => items().length === 0),
 
     /** Total number of button-type items */
-    totalWords: computed(() => items().filter((i) => i.type === 'button').length),
+    totalWords: computed(() => items().filter(i => i.type === 'button').length),
 
     /** Total number of folder-type items */
-    totalFolders: computed(() => items().filter((i) => i.type === 'folder').length),
+    totalFolders: computed(() => items().filter(i => i.type === 'folder').length),
 
     /** Lookup map for O(1) access by id */
     itemMap: computed(() => {
@@ -107,18 +119,13 @@ export const ItemsStore = signalStore(
 
   // ── Methods ─────────────────────────────────────────────────────────────────
 
-  withMethods((store) => {
+  withMethods(store => {
     const db = inject(IndexedDbService);
 
-    // ── helpers ──────────────────────────────────────────────────────
-
     function setError(error: unknown): void {
-      const message =
-        error instanceof Error ? error.message : 'Error desconocido';
+      const message = error instanceof Error ? error.message : 'Error desconocido';
       patchState(store, { error: message, isLoading: false });
     }
-
-    // ── public API ───────────────────────────────────────────────────
 
     return {
       // Navigation
@@ -126,12 +133,24 @@ export const ItemsStore = signalStore(
 
       /** Navigate into a folder */
       selectFolder(folderId: string): void {
+        console.warn({folderId});
         patchState(store, { selectedFolderId: folderId });
       },
 
       /** Go back to the home/root screen */
       goHome(): void {
         patchState(store, { selectedFolderId: null });
+      },
+
+      // Sentence
+      // ─────────────────────────────────────────────────────────────
+      /** Add a sentence */
+      addSentence(sentence: string): void {
+        patchState(store, { sentence: [...store.sentence(), sentence] });
+      },
+
+      removeLastSentence(): void {
+        patchState(store, { sentence: store.sentence().slice(0, -1) });
       },
 
       // Data lifecycle
@@ -216,7 +235,7 @@ export const ItemsStore = signalStore(
         try {
           await db.put(updated);
           patchState(store, {
-            items: store.items().map((i) => (i.id === updated.id ? updated : i)),
+            items: store.items().map(i => (i.id === updated.id ? updated : i)),
             wordUpdated: true,
           });
         } catch (error) {
@@ -242,8 +261,8 @@ export const ItemsStore = signalStore(
         if (target.type === 'folder') {
           const children = store
             .items()
-            .filter((i) => i.folderId === id)
-            .map((i) => i.id);
+            .filter(i => i.folderId === id)
+            .map(i => i.id);
           idsToDelete.push(...children);
         }
 
@@ -252,13 +271,10 @@ export const ItemsStore = signalStore(
 
           const deletedSet = new Set(idsToDelete);
           patchState(store, {
-            items: store.items().filter((i) => !deletedSet.has(i.id)),
+            items: store.items().filter(i => !deletedSet.has(i.id)),
             wordDeleted: true,
             // If we deleted the currently open folder, go home
-            selectedFolderId:
-              store.selectedFolderId() === id
-                ? null
-                : store.selectedFolderId(),
+            selectedFolderId: store.selectedFolderId() === id ? null : store.selectedFolderId(),
           });
         } catch (error) {
           setError(error);
@@ -281,11 +297,9 @@ export const ItemsStore = signalStore(
         try {
           await db.bulkPut(reordered);
 
-          const reorderedMap = new Map(reordered.map((i) => [i.id, i]));
+          const reorderedMap = new Map(reordered.map(i => [i.id, i]));
           patchState(store, {
-            items: store
-              .items()
-              .map((i) => reorderedMap.get(i.id) ?? i),
+            items: store.items().map(i => reorderedMap.get(i.id) ?? i),
           });
         } catch (error) {
           setError(error);

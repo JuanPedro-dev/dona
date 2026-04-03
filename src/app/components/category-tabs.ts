@@ -37,6 +37,6 @@ export class CategoryTabs {
   protected readonly activeCategory = this.itemsStore.selectedFolderId;
 
   handleSelect(id: string | undefined): void {
-    // todo:
+    this.itemsStore.selectFolder(id ?? '');
   }
 }
