@@ -7,21 +7,27 @@ import {
   signal,
 } from '@angular/core';
 
+import { ItemsStore } from '@store/word/items.store';
 import { Navbar } from '@components/navbar';
 import { SentenceBar } from '@components/sentence-bar';
-import { ItemsStore } from 'src/core/libs/store/word/items.store';
+import { CategoryTabs } from '@components/category-tabs';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [Navbar, SentenceBar],
+  imports: [Navbar, SentenceBar, CategoryTabs],
   template: `
     <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
       <app-navbar></app-navbar>
 
       <main class="flex-1 overflow-auto">
-        <dona-sentence-bar></dona-sentence-bar>
+        <app-sentence-bar />
 
+        <app-category-tabs />
+
+        <div class="px-4 py-2 grow">
+          <h2 class="text-lg font-bold px-4 py-2">Current Sentence:</h2>
+        </div>
         <!-- Demo buttons to add words -->
         <div class="p-4 flex flex-wrap gap-2">
           <span class="text-sm text-gray-500 w-full mb-2">Demo: Tap to add words</span>

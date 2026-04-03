@@ -11,18 +11,18 @@ import { ItemsStore } from '@store/word/items.store';
       @for (cat of categories(); track cat.id) {
         <button
           type="button"
-          (click)="handleSelect(cat.id)"
+          (click)="handleSelect(cat?.id)"
           class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all"
-          [class.text-white]="activeCategory() === cat.id"
-          [class.shadow-lg]="activeCategory() === cat.id"
-          [class.scale-105]="activeCategory() === cat.id"
-          [class.bg-white]="activeCategory() !== cat.id"
-          [class.text-gray-600]="activeCategory() !== cat.id"
-          [class.hover:bg-gray-200]="activeCategory() !== cat.id"
-          [class.border]="activeCategory() !== cat.id"
-          [class.border-gray-200]="activeCategory() !== cat.id"
-          [style.background-color]="activeCategory() === cat.id ? cat.color : null">
-          <span class="text-lg">{{ cat.icon }}</span>
+          [class.text-white]="activeCategory() === cat?.id"
+          [class.shadow-lg]="activeCategory() === cat?.id"
+          [class.scale-105]="activeCategory() === cat?.id"
+          [class.bg-white]="activeCategory() !== cat?.id"
+          [class.text-gray-600]="activeCategory() !== cat?.id"
+          [class.hover:bg-gray-200]="activeCategory() !== cat?.id"
+          [class.border]="activeCategory() !== cat?.id"
+          [class.border-gray-200]="activeCategory() !== cat?.id"
+          [style.background-color]="activeCategory() === cat?.id ? cat?.backgroundColor : null">
+          <span class="text-lg">{{ cat.emoji }}</span>
           <span>{{ cat.label }}</span>
         </button>
       }
@@ -33,5 +33,10 @@ import { ItemsStore } from '@store/word/items.store';
 export class CategoryTabs {
   protected readonly itemsStore = inject(ItemsStore);
 
-  protected readonly categories = this.itemsStore.rootFolders();
+  protected readonly categories = this.itemsStore.rootFolders;
+  protected readonly activeCategory = this.itemsStore.selectedFolderId;
+
+  handleSelect(id: string | undefined): void {
+    // todo:
+  }
 }
