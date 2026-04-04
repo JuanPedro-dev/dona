@@ -1,4 +1,4 @@
-import { Location, CommonModule } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Navbar } from '@components/navbar';
@@ -27,7 +27,7 @@ import { ItemsStore } from '@store/word/items.store';
 
         <button
           routerLink="/add-item"
-          class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95">
+          class="bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 rounded-2xl font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95 cursor-pointer">
           <span>➕</span>
           <span>Agregar Palabra</span>
         </button>
@@ -44,7 +44,7 @@ import { ItemsStore } from '@store/word/items.store';
             </div>
             <button
               (click)="testVoice()"
-              class="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 text-xs font-bold hover:bg-indigo-100 transition-colors">
+              class="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 text-xs font-bold hover:bg-indigo-100 transition-colors cursor-pointer">
               📢 Probar
             </button>
           </div>
@@ -113,19 +113,31 @@ import { ItemsStore } from '@store/word/items.store';
 
             <!-- Auto Speak toggle -->
             <div
-              (click)="layoutService.setAutoSpeakOnClick(!autoSpeakOnClick())"
-              class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 mt-2 cursor-pointer hover:bg-gray-100 transition-colors">
+              (click)="showSentenceBar() && layoutService.setAutoSpeakOnClick(!autoSpeakOnClick())"
+              class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 mt-2 transition-all"
+              [class.cursor-pointer]="showSentenceBar()"
+              [class.cursor-not-allowed]="!showSentenceBar()"
+              [class.opacity-60]="!showSentenceBar()"
+              [class.hover:bg-gray-100]="showSentenceBar()">
               <div class="flex flex-col">
                 <span class="text-xs font-bold text-gray-700">Reproducir al Tocar</span>
-                <span class="text-[10px] text-gray-400">Hablar cuando se pulsa un botón</span>
+                <span class="text-[10px] text-gray-400">
+                  {{
+                    !showSentenceBar()
+                      ? 'Activado automáticamente'
+                      : 'Hablar cuando se pulsa un botón'
+                  }}
+                </span>
               </div>
               <button
-                class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none cursor-pointer"
-                [class.bg-indigo-600]="autoSpeakOnClick()"
-                [class.bg-gray-300]="!autoSpeakOnClick()">
+                class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                [class.cursor-pointer]="showSentenceBar()"
+                [class.cursor-not-allowed]="!showSentenceBar()"
+                [class.bg-indigo-600]="!showSentenceBar() || autoSpeakOnClick()"
+                [class.bg-gray-300]="showSentenceBar() && !autoSpeakOnClick()">
                 <div
                   class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"
-                  [class.translate-x-6]="autoSpeakOnClick()"></div>
+                  [class.translate-x-6]="!showSentenceBar() || autoSpeakOnClick()"></div>
               </button>
             </div>
           </div>
@@ -352,19 +364,19 @@ import { ItemsStore } from '@store/word/items.store';
           @if (!showResetConfirm()) {
             <button
               (click)="showResetConfirm.set(true)"
-              class="px-5 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-xs hover:bg-red-100 transition-all border border-red-100">
+              class="px-5 py-2.5 rounded-xl bg-red-50 text-red-600 font-bold text-xs hover:bg-red-100 transition-all border border-red-100 cursor-pointer">
               Restablecer
             </button>
           } @else {
             <div class="flex gap-2">
               <button
                 (click)="confirmReset()"
-                class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-all shadow-md">
+                class="px-4 py-2 rounded-xl bg-red-600 text-white font-bold text-xs hover:bg-red-700 transition-all shadow-md cursor-pointer">
                 Confirmar
               </button>
               <button
                 (click)="showResetConfirm.set(false)"
-                class="px-4 py-2 rounded-xl bg-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-300 transition-all">
+                class="px-4 py-2 rounded-xl bg-gray-200 text-gray-600 font-bold text-xs hover:bg-gray-300 transition-all cursor-pointer">
                 Cancelar
               </button>
             </div>
@@ -391,7 +403,6 @@ export class Config {
   private readonly speechService = inject(SpeechService);
   private readonly itemsStore = inject(ItemsStore);
   protected readonly layoutService = inject(LayoutService);
-  private readonly location = inject(Location);
 
   // Derived from services
   protected readonly voices = this.speechService.voices;
@@ -415,7 +426,7 @@ export class Config {
   protected showResetConfirm = signal(false);
 
   testVoice() {
-    this.speechService.speak('Esta es una prueba de configuración de voz para Doña.');
+    this.speechService.speak('Esta es una prueba de configuración de voz.');
   }
 
   confirmReset() {
