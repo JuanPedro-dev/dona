@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
+import { LayoutService } from '@services/layout.service';
 import { AacButton } from './aac-button';
 
 @Component({
@@ -7,22 +8,28 @@ import { AacButton } from './aac-button';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [AacButton],
   template: `
-    <div class="flex flex-wrap gap-8 px-3 py-4 overflow-x-auto scrollbar-hide">
+    <div
+      class="flex flex-wrap"
+      [style.gap.px]="currentPreset().gridGap"
+      [style.padding.px]="currentPreset().gridPadding">
       @for (word of words(); track word.id) {
         <app-aac-button
           (click)="selectWord(word.label)"
+          [class.grow]="currentPreset().stretchToFill"
           [button]="{
             label: word.label,
             emoji: word.emoji ? word.emoji : '',
             color: word.backgroundColor,
           }"
-          [isEditMode]="isEditMode()" />
+          [layout]="buttonLayout()"
+          [isEditMode]="isEditMode()"
+          [style.flex-basis.px]="currentPreset().buttonWidth" />
       } @empty {
-        <div className="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
-          <div className="text-center">
-            <span className="text-5xl block mb-4">📭</span>
-            <p className="font-semibold">No buttons in this category</p>
-            <p className="text-sm mt-1">Tap the ⚙️ Settings button to add new buttons</p>
+        <div class="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
+          <div class="text-center">
+            <span class="text-5xl block mb-4">📭</span>
+            <p class="font-semibold">No buttons in this category</p>
+            <p class="text-sm mt-1">Tap the ⚙️ Settings button to add new buttons</p>
           </div>
         </div>
       }
@@ -32,10 +39,24 @@ import { AacButton } from './aac-button';
 })
 export class GridButtons {
   protected readonly itemsStore = inject(ItemsStore);
+  protected readonly layoutService = inject(LayoutService);
   protected readonly words = this.itemsStore.words;
-  isEditMode = signal(true);
+  protected readonly currentPreset = this.layoutService.currentPreset;
+  protected readonly isEditMode = signal(true);
 
-  selectWord(word: string ): void {
+  protected readonly buttonLayout = computed(() => {
+    const preset = this.currentPreset();
+    return {
+      minWidth: preset.buttonWidth,
+      minHeight: preset.buttonHeight,
+      borderRadius: preset.buttonBorderRadius,
+      fontSize: preset.buttonFontSize,
+      emojiSize: preset.emojiSize,
+      stretchToFill: preset.stretchToFill,
+    };
+  });
+
+  selectWord(word: string): void {
     this.itemsStore.addToSentence(word);
   }
 }

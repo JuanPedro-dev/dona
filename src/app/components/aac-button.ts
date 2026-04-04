@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
 
 type AACButton = {
   label: string;
@@ -6,17 +6,32 @@ type AACButton = {
   color: string;
 };
 
+type ButtonLayout = {
+  minWidth?: number;
+  minHeight?: number;
+  borderRadius?: number;
+  fontSize?: number;
+  emojiSize?: number;
+  stretchToFill?: boolean;
+};
+
 @Component({
   selector: 'app-aac-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     <button
       type="button"
+      [class.grow]="layout().stretchToFill"
+      [class.w-full]="layout().stretchToFill"
+      [class.h-full]="layout().stretchToFill"
+      [style.width.px]="!layout().stretchToFill ? layout().minWidth : null"
+      [style.height.px]="layout().minHeight"
       (click)="handleClick()"
       (pointerdown)="handlePointerDown()"
       (pointerup)="handlePointerUp()"
       (pointerleave)="handlePointerUp()"
-      class="min-w-48 relative flex flex-col items-center justify-center rounded-2xl p-2 transition-all duration-100 select-none shadow-lg hover:shadow-xl"
+      class="relative flex flex-col items-center justify-center p-2 transition-all duration-100 select-none shadow-lg hover:shadow-xl"
       [class.scale-90]="pressed()"
       [class.brightness-90]="pressed()"
       [class.hover:scale-[1.03]]="!pressed()"
@@ -27,30 +42,32 @@ type AACButton = {
       [class.ring-offset-2]="isEditMode()"
       [style.background-color]="button().color"
       [style.border-bottom]="borderColor()"
-    >
+      [style.border-radius.px]="layout().borderRadius">
       @if (isEditMode()) {
-        <div class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md z-10">
+        <div
+          class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md z-10">
           ✏️
         </div>
       }
 
-      <span class="text-3xl sm:text-4xl leading-none drop-shadow-sm">
+      <span class="leading-none drop-shadow-sm" [style.font-size.px]="layout().emojiSize">
         {{ button().emoji }}
       </span>
 
       <span
-        class="mt-2 text-xs sm:text-sm font-bold leading-tight text-center"
+        class="mt-2 font-bold leading-tight text-center"
         [style.color]="textColor()"
         [style.text-shadow]="textShadow()"
-      >
+        [style.font-size.px]="layout().fontSize">
         {{ button().label }}
       </span>
     </button>
-  `
+  `,
 })
 export class AacButton {
   button = input.required<AACButton>();
   isEditMode = input<boolean>(false);
+  layout = input<ButtonLayout>({});
 
   tap = output<string>();
   longPress = output<AACButton>();
@@ -91,9 +108,7 @@ export class AacButton {
   }
 
   textShadow() {
-    return this.isLightColor(this.button().color)
-      ? 'none'
-      : '0 1px 2px rgba(0,0,0,0.3)';
+    return this.isLightColor(this.button().color) ? 'none' : '0 1px 2px rgba(0,0,0,0.3)';
   }
 
   private darkenColor(hex: string, amount: number) {
