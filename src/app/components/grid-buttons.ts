@@ -10,19 +10,18 @@ import { AacButton } from './aac-button';
   template: `
     <div
       class="flex flex-wrap"
-      [style.gap.px]="currentPreset().gridGap"
-      [style.padding.px]="currentPreset().gridPadding">
+      [style.gap.px]="layoutService.gridGap()"
+      [style.padding.px]="layoutService.gridPadding()">
       @for (word of words(); track word.id) {
         <app-aac-button
           (click)="selectWord(word.label)"
-          [class.grow]="currentPreset().stretchToFill"
+          [class.grow]="layoutService.stretchToFill()"
           [button]="{
             label: word.label,
             emoji: word.emoji ? word.emoji : '',
             color: word.backgroundColor,
           }"
-          [layout]="buttonLayout()"
-          [style.flex-basis.px]="currentPreset().buttonWidth" />
+          [layout]="buttonLayout()" />
       } @empty {
         <div class="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
           <div class="text-center">
@@ -40,18 +39,15 @@ export class GridButtons {
   protected readonly itemsStore = inject(ItemsStore);
   protected readonly layoutService = inject(LayoutService);
   protected readonly words = this.itemsStore.words;
-  protected readonly currentPreset = this.layoutService.currentPreset;
-  protected readonly isEditMode = signal(true);
 
   protected readonly buttonLayout = computed(() => {
-    const preset = this.currentPreset();
     return {
-      minWidth: preset.buttonWidth,
-      minHeight: preset.buttonHeight,
-      borderRadius: preset.buttonBorderRadius,
-      fontSize: preset.buttonFontSize,
-      emojiSize: preset.emojiSize,
-      stretchToFill: preset.stretchToFill,
+      minWidth: this.layoutService.buttonWidth(),
+      minHeight: this.layoutService.buttonHeight(),
+      borderRadius: this.layoutService.buttonBorderRadius(),
+      fontSize: this.layoutService.buttonFontSize(),
+      emojiSize: this.layoutService.emojiSize(),
+      stretchToFill: this.layoutService.stretchToFill(),
     };
   });
 

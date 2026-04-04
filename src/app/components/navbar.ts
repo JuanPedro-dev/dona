@@ -25,7 +25,7 @@ import { LayoutService } from '@services/layout.service';
         }
         <button
           routerLink="/config"
-          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-90"
+          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-95"
           title="Settings">
           ⚙️
         </button>

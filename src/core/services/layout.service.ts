@@ -37,7 +37,7 @@ export class LayoutService {
       buttonHeight: 100,
       buttonBorderRadius: 16,
       buttonFontSize: 12,
-      emojiSize: 28,
+      emojiSize: 24,
       gridGap: 8,
       gridPadding: 8,
       stretchToFill: false,
@@ -49,7 +49,7 @@ export class LayoutService {
       buttonHeight: 140,
       buttonBorderRadius: 24,
       buttonFontSize: 14,
-      emojiSize: 36,
+      emojiSize: 32,
       gridGap: 12,
       gridPadding: 12,
       stretchToFill: false,
@@ -61,7 +61,7 @@ export class LayoutService {
       buttonHeight: 180,
       buttonBorderRadius: 28,
       buttonFontSize: 16,
-      emojiSize: 44,
+      emojiSize: 40,
       gridGap: 16,
       gridPadding: 16,
       stretchToFill: false,
@@ -73,7 +73,7 @@ export class LayoutService {
       buttonHeight: 200,
       buttonBorderRadius: 32,
       buttonFontSize: 20,
-      emojiSize: 56,
+      emojiSize: 52,
       gridGap: 20,
       gridPadding: 20,
       stretchToFill: true,
@@ -85,7 +85,7 @@ export class LayoutService {
       buttonHeight: 160,
       buttonBorderRadius: 24,
       buttonFontSize: 14,
-      emojiSize: 40,
+      emojiSize: 36,
       gridGap: 14,
       gridPadding: 14,
       stretchToFill: false,
@@ -97,59 +97,53 @@ export class LayoutService {
       buttonHeight: 120,
       buttonBorderRadius: 20,
       buttonFontSize: 13,
-      emojiSize: 32,
+      emojiSize: 28,
       gridGap: 10,
       gridPadding: 10,
       stretchToFill: false,
     },
   ];
 
+  // Individual signals for customization
   readonly currentPresetId = signal<string>('compact');
-
-  readonly currentPreset = computed(
-    () => this.presets.find(p => p.id === this.currentPresetId()) ?? this.presets[0],
-  );
+  readonly buttonWidth = signal(120);
+  readonly buttonHeight = signal(100);
+  readonly buttonBorderRadius = signal(16);
+  readonly buttonFontSize = signal(12);
+  readonly emojiSize = signal(24);
+  readonly gridGap = signal(8);
+  readonly gridPadding = signal(8);
+  readonly stretchToFill = signal(false);
 
   readonly allPresets = computed(() => this.presets);
 
-  getPresetById(id: string): LayoutPreset | undefined {
-    return this.presets.find(p => p.id === id);
+  constructor() {
+    // Sync initial state from default preset
+    this.setPreset('compact');
   }
 
   setPreset(id: string): void {
     const preset = this.presets.find(p => p.id === id);
     if (preset) {
       this.currentPresetId.set(id);
+      this.buttonWidth.set(preset.buttonWidth);
+      this.buttonHeight.set(preset.buttonHeight);
+      this.buttonBorderRadius.set(preset.buttonBorderRadius);
+      this.buttonFontSize.set(preset.buttonFontSize);
+      this.emojiSize.set(preset.emojiSize);
+      this.gridGap.set(preset.gridGap);
+      this.gridPadding.set(preset.gridPadding);
+      this.stretchToFill.set(preset.stretchToFill);
     }
   }
 
-  getLayoutConfig(preset: LayoutPreset): LayoutConfig {
-    return {
-      minWidth: `${preset.buttonWidth}px`,
-      padding: `${preset.gridPadding}px`,
-      borderRadius: `${preset.buttonBorderRadius}px`,
-      fontSize: `${preset.buttonFontSize}px`,
-      emojiSize: `${preset.emojiSize}px`,
-      gap: `${preset.gridGap}px`,
-      gridTemplateColumns: 'repeat(auto-fill, minmax(0, 1fr))',
-    };
-  }
+  // Update methods for individual properties
+  setButtonWidth(value: number) { this.buttonWidth.set(value); }
+  setButtonHeight(value: number) { this.buttonHeight.set(value); }
+  setStretchToFill(value: boolean) { this.stretchToFill.set(value); }
+  setGridGap(value: number) { this.gridGap.set(value); }
+  setGridPadding(value: number) { this.gridPadding.set(value); }
 
-  getButtonStyles(preset: LayoutPreset): string {
-    const radius = `${preset.buttonBorderRadius}px`;
-    const height = `${preset.buttonHeight}px`;
-    const fontSize = `${preset.buttonFontSize}px`;
-    const emojiSize = `${preset.emojiSize}px`;
-
-    return `
-      min-width: ${preset.buttonWidth}px;
-      min-height: ${height};
-      border-radius: ${radius};
-      padding: 8px;
-    `;
-  }
-
-  // Edit mode toggle
   toggleEditMode(): void {
     this.isEditMode.set(!this.isEditMode());
   }
