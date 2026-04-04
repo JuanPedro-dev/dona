@@ -18,7 +18,7 @@ import { ItemsStore } from '@store/word/items.store';
       <div class="flex items-center justify-between">
         <div class="flex items-center gap-3">
           <button
-            (click)="goBack()"
+            routerLink="/"
             class="w-10 h-10 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center transition-colors">
             ⬅️
           </button>
@@ -53,13 +53,15 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Voice -->
             <div>
               <label
-                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1"
+                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1 cursor-pointer"
+                for="voice-select"
                 >Voz</label
               >
               <select
+                id="voice-select"
                 [value]="selectedVoiceName()"
                 (change)="selectedVoiceChange($event)"
-                class="w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:outline-none text-gray-700 bg-gray-50/50 appearance-none transition-colors">
+                class="w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:outline-none text-gray-700 bg-gray-50/50 appearance-none transition-colors cursor-pointer">
                 @for (v of voices(); track v.name) {
                   <option [value]="v.name">{{ v.name }} ({{ v.lang }})</option>
                 }
@@ -69,7 +71,8 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Speed -->
             <div>
               <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1"
+                <label
+                  class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                   >Velocidad</label
                 >
                 <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg"
@@ -89,7 +92,8 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Paso (Pitch) -->
             <div>
               <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1"
+                <label
+                  class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                   >Paso</label
                 >
                 <span
@@ -109,14 +113,14 @@ import { ItemsStore } from '@store/word/items.store';
 
             <!-- Auto Speak toggle -->
             <div
-              class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 mt-2">
+              (click)="layoutService.setAutoSpeakOnClick(!autoSpeakOnClick())"
+              class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 mt-2 cursor-pointer hover:bg-gray-100 transition-colors">
               <div class="flex flex-col">
                 <span class="text-xs font-bold text-gray-700">Reproducir al Tocar</span>
                 <span class="text-[10px] text-gray-400">Hablar cuando se pulsa un botón</span>
               </div>
               <button
-                (click)="layoutService.setAutoSpeakOnClick(!autoSpeakOnClick())"
-                class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none cursor-pointer"
                 [class.bg-indigo-600]="autoSpeakOnClick()"
                 [class.bg-gray-300]="!autoSpeakOnClick()">
                 <div
@@ -138,7 +142,7 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Edit Mode Toggle -->
             <button
               (click)="toggleEditMode()"
-              class="w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2"
+              class="w-full py-3.5 rounded-2xl font-black text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 cursor-pointer"
               [class.bg-yellow-50]="isEditMode()"
               [class.text-yellow-700]="isEditMode()"
               [class.border-2]="isEditMode()"
@@ -153,14 +157,14 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Presets -->
             <div>
               <label
-                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2.5 ml-1"
+                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2.5 ml-1 cursor-pointer"
                 >Ajuste Rápido</label
               >
               <div class="grid grid-cols-3 gap-2">
                 @for (p of allPresets(); track p.id) {
                   <button
                     (click)="layoutService.setPreset(p.id)"
-                    class="py-2 px-1 rounded-xl text-[10px] font-bold border-2 transition-all truncate"
+                    class="py-2 px-1 rounded-xl text-[10px] font-bold border-2 transition-all truncate cursor-pointer"
                     [class.bg-indigo-600]="currentPresetId() === p.id"
                     [class.border-indigo-600]="currentPresetId() === p.id"
                     [class.text-white]="currentPresetId() === p.id"
@@ -180,7 +184,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Ancho</label
                     >
                     <span class="text-[10px] font-black text-gray-800">{{ buttonWidth() }}px</span>
@@ -198,7 +202,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Alto</label
                     >
                     <span class="text-[10px] font-black text-gray-800">{{ buttonHeight() }}px</span>
@@ -218,7 +222,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Letra</label
                     >
                     <span class="text-[10px] font-black text-gray-800"
@@ -238,7 +242,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Emoji</label
                     >
                     <span class="text-[10px] font-black text-gray-800">{{ emojiSize() }}px</span>
@@ -259,7 +263,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Gap</label
                     >
                     <span class="text-[10px] font-black text-gray-800">{{ gridGap() }}px</span>
@@ -277,7 +281,7 @@ import { ItemsStore } from '@store/word/items.store';
                 <div>
                   <div class="flex justify-between items-center mb-1.5">
                     <label
-                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1 cursor-pointer"
                       >Padding</label
                     >
                     <span class="text-[10px] font-black text-gray-800">{{ gridPadding() }}px</span>
@@ -296,14 +300,14 @@ import { ItemsStore } from '@store/word/items.store';
               <div class="space-y-2 pt-2">
                 <!-- Stretch to fill toggle -->
                 <div
-                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100">
+                  (click)="layoutService.setStretchToFill(!stretchToFill())"
+                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors">
                   <div class="flex flex-col">
                     <span class="text-xs font-bold text-gray-700">Expander Botones</span>
                     <span class="text-[10px] text-gray-400">Ocupar todo el ancho</span>
                   </div>
                   <button
-                    (click)="layoutService.setStretchToFill(!stretchToFill())"
-                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none cursor-pointer"
                     [class.bg-indigo-600]="stretchToFill()"
                     [class.bg-gray-300]="!stretchToFill()">
                     <div
@@ -314,14 +318,14 @@ import { ItemsStore } from '@store/word/items.store';
 
                 <!-- Sentence Bar toggle -->
                 <div
-                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100">
+                  (click)="layoutService.setShowSentenceBar(!showSentenceBar())"
+                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 cursor-pointer hover:bg-gray-100 transition-colors">
                   <div class="flex flex-col">
                     <span class="text-xs font-bold text-gray-700">Barra de Oraciones</span>
                     <span class="text-[10px] text-gray-400">Mostrar/Ocultar barra superior</span>
                   </div>
                   <button
-                    (click)="layoutService.setShowSentenceBar(!showSentenceBar())"
-                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none cursor-pointer"
                     [class.bg-indigo-600]="showSentenceBar()"
                     [class.bg-gray-300]="!showSentenceBar()">
                     <div
@@ -409,10 +413,6 @@ export class Config {
   protected readonly autoSpeakOnClick = this.layoutService.autoSpeakOnClick;
 
   protected showResetConfirm = signal(false);
-
-  goBack() {
-    this.location.back();
-  }
 
   testVoice() {
     this.speechService.speak('Esta es una prueba de configuración de voz para Doña.');
