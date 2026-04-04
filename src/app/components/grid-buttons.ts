@@ -22,7 +22,6 @@ import { AacButton } from './aac-button';
             color: word.backgroundColor,
           }"
           [layout]="buttonLayout()"
-          [isEditMode]="isEditMode()"
           [style.flex-basis.px]="currentPreset().buttonWidth" />
       } @empty {
         <div class="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">

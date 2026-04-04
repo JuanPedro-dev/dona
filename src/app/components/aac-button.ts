@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { LayoutService } from '@services/layout.service';
 
 type AACButton = {
   label: string;
@@ -65,8 +66,9 @@ type ButtonLayout = {
   `,
 })
 export class AacButton {
+  private readonly layoutService = inject(LayoutService);
+  isEditMode = this.layoutService.isEditMode;
   button = input.required<AACButton>();
-  isEditMode = input<boolean>(false);
   layout = input<ButtonLayout>({});
 
   tap = output<string>();
