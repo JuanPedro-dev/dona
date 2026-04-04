@@ -1,19 +1,20 @@
 import {
-  Component,
   ChangeDetectionStrategy,
-  input,
-  output,
-  signal,
+  Component,
   computed,
   effect,
   inject,
+  input,
+  output,
+  signal,
 } from '@angular/core';
-import { AACButton, Category, COLOR_OPTIONS, EMOJI_OPTIONS } from './config.model';
+import { EMOJI_OPTIONS, COLOR_OPTIONS, AACButton, Category } from '@components/config/config.model';
 import { ItemsStore } from '@store/word/items.store';
 
 @Component({
-  selector: 'app-config-panel',
+  selector: 'app-add-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [],
   template: `
     @if (isOpen()) {
       <div class="fixed inset-0 z-50 flex items-end sm:items-center justify-center">
@@ -72,8 +73,8 @@ import { ItemsStore } from '@store/word/items.store';
                     [class.bg-gray-100]="category() !== cat.id"
                     [class.text-gray-600]="category() !== cat.id"
                     [class.hover:bg-gray-200]="category() !== cat.id"
-                    [style.background-color]="category() === cat.id ? cat.color : null">
-                    <span>{{ cat.icon }}</span>
+                    [style.background-color]="category() === cat.id ? cat.backgroundColor : null">
+                    <span>{{ cat.emoji }}</span>
                     <span>{{ cat.label }}</span>
                   </button>
                 }
@@ -166,8 +167,9 @@ import { ItemsStore } from '@store/word/items.store';
       </div>
     }
   `,
+  styles: ``,
 })
-export class Config {
+export class AddItem {
   private readonly itemsStore = inject(ItemsStore);
   protected readonly emojiOptions = EMOJI_OPTIONS;
   protected readonly colorOptions = COLOR_OPTIONS;
@@ -175,12 +177,10 @@ export class Config {
   button = input<AACButton | null>(null);
   isOpen = input(false);
   isNewButton = input(false);
-  categories = input.required<Category[]>();
+  protected readonly categories = this.itemsStore.rootFolders;
+  close = output<void>();
 
-  save = output<{ id: string; updates: Partial<AACButton> }>();
-  delete = output<string>();
-  add = output<AACButton>();
-
+  // Form fields
   label = signal('');
   icon = signal('');
   color = signal('#3b82f6');
@@ -206,31 +206,22 @@ export class Config {
   }
 
   handleSave() {
-    if (this.isNewButton()) {
-      this.add.emit({
-        id: `btn-custom-${Date.now()}`,
-        label: this.label() || 'New',
-        icon: this.icon() || '⭐',
-        color: this.color(),
-        category: this.category(),
-      });
-    } else if (this.button()) {
-      this.save.emit({
-        id: this.button()!.id,
-        updates: {
-          label: this.label(),
-          icon: this.icon(),
-          color: this.color(),
-          category: this.category(),
-        },
-      });
-    }
+    this.itemsStore.addItem({
+      label: this.label(),
+      emoji: this.icon(),
+      backgroundColor: this.color(),
+      folderId: this.category() === 'core' ? null : this.category(),
+      type: 'folder',
+      textColor: this.color(),
+      order: 0,
+    });
+
     this.closeModal();
   }
 
   handleDelete() {
     if (this.button()) {
-      this.delete.emit(this.button()!.id);
+      this.itemsStore.deleteItem(this.button()!.id);
       this.closeModal();
     }
   }
@@ -246,6 +237,6 @@ export class Config {
   }
 
   closeModal() {
-    // close modal and reset state
+    this.close.emit();
   }
-  }
+}

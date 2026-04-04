@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
 
 @Component({
   selector: 'app-navbar',
@@ -33,8 +33,10 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 })
 export class Navbar {
   isEditMode = signal(false);
+  settingsOpen = output<void>();
 
   setIsSettingsOpen() {
-    // Open Modal with options to edit the app, such as changing the theme, managing buttons, etc.
+    this.settingsOpen.emit();
   }
 }
+
