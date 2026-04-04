@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
 import { LayoutService } from '@services/layout.service';
+import { SpeechService } from '@services/speech.service';
 import { AacButton } from './aac-button';
 
 @Component({
@@ -26,8 +27,8 @@ import { AacButton } from './aac-button';
         <div class="flex-1 flex items-center justify-center text-gray-400 text-lg p-8">
           <div class="text-center">
             <span class="text-5xl block mb-4">📭</span>
-            <p class="font-semibold">No buttons in this category</p>
-            <p class="text-sm mt-1">Tap the ⚙️ Settings button to add new buttons</p>
+            <p class="font-semibold">No hay botones en esta categoría</p>
+            <p class="text-sm mt-1">Toca el botón ⚙️ Ajustes para agregar nuevos botones</p>
           </div>
         </div>
       }
@@ -38,6 +39,7 @@ import { AacButton } from './aac-button';
 export class GridButtons {
   protected readonly itemsStore = inject(ItemsStore);
   protected readonly layoutService = inject(LayoutService);
+  protected readonly speechService = inject(SpeechService);
   protected readonly words = this.itemsStore.words;
 
   protected readonly buttonLayout = computed(() => {
@@ -52,6 +54,19 @@ export class GridButtons {
   });
 
   selectWord(word: string): void {
-    this.itemsStore.addToSentence(word);
+    const showSentenceBar = this.layoutService.showSentenceBar();
+    const autoSpeakOnClick = this.layoutService.autoSpeakOnClick();
+
+    if (!showSentenceBar) {
+      // If sentence bar is hidden, we peak immediately and don't add to sentence
+      this.speechService.speak(word);
+    } else {
+      // If sentence bar is visible, we add to sentence
+      this.itemsStore.addToSentence(word);
+      // And we might also speak immediately if configured
+      if (autoSpeakOnClick) {
+        this.speechService.speak(word);
+      }
+    }
   }
 }

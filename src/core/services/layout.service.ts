@@ -115,6 +115,10 @@ export class LayoutService {
   readonly gridPadding = signal(8);
   readonly stretchToFill = signal(false);
 
+  // New application logic toggles
+  readonly showSentenceBar = signal(true);
+  readonly autoSpeakOnClick = signal(false);
+
   readonly allPresets = computed(() => this.presets);
 
   constructor() {
@@ -140,9 +144,14 @@ export class LayoutService {
   // Update methods for individual properties
   setButtonWidth(value: number) { this.buttonWidth.set(value); }
   setButtonHeight(value: number) { this.buttonHeight.set(value); }
+  setButtonFontSize(value: number) { this.buttonFontSize.set(value); }
+  setEmojiSize(value: number) { this.emojiSize.set(value); }
   setStretchToFill(value: boolean) { this.stretchToFill.set(value); }
   setGridGap(value: number) { this.gridGap.set(value); }
   setGridPadding(value: number) { this.gridPadding.set(value); }
+  
+  setShowSentenceBar(value: boolean) { this.showSentenceBar.set(value); }
+  setAutoSpeakOnClick(value: boolean) { this.autoSpeakOnClick.set(value); }
 
   toggleEditMode(): void {
     this.isEditMode.set(!this.isEditMode());

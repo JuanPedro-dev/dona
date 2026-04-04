@@ -37,15 +37,25 @@ import { ItemsStore } from '@store/word/items.store';
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <!-- 🗣️ Speech Section -->
         <section class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-5">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-xl">🗣️</span>
-            <h3 class="text-lg font-bold text-gray-800">Voz y Sonido</h3>
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <span class="text-xl">🗣️</span>
+              <h3 class="text-lg font-bold text-gray-800">Voz y Sonido</h3>
+            </div>
+            <button
+              (click)="testVoice()"
+              class="px-3 py-1.5 rounded-xl bg-indigo-50 text-indigo-600 text-xs font-bold hover:bg-indigo-100 transition-colors">
+              📢 Probar
+            </button>
           </div>
 
           <div class="space-y-4">
             <!-- Voice -->
             <div>
-              <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Voz</label>
+              <label
+                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1"
+                >Voz</label
+              >
               <select
                 [value]="selectedVoiceName()"
                 (change)="selectedVoiceChange($event)"
@@ -59,8 +69,12 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Speed -->
             <div>
               <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Velocidad</label>
-                <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg">{{ rate().toFixed(1) }}x</span>
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1"
+                  >Velocidad</label
+                >
+                <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-lg"
+                  >{{ rate().toFixed(1) }}x</span
+                >
               </div>
               <input
                 type="range"
@@ -75,8 +89,13 @@ import { ItemsStore } from '@store/word/items.store';
             <!-- Paso (Pitch) -->
             <div>
               <div class="flex justify-between items-center mb-2">
-                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1">Paso</label>
-                <span class="text-xs font-black text-purple-600 bg-purple-50 px-2 py-0.5 rounded-lg">{{ pitch().toFixed(1) }}</span>
+                <label class="text-xs font-bold text-gray-400 uppercase tracking-widest ml-1"
+                  >Paso</label
+                >
+                <span
+                  class="text-xs font-black text-purple-600 bg-purple-50 px-2 py-0.5 rounded-lg"
+                  >{{ pitch().toFixed(1) }}</span
+                >
               </div>
               <input
                 type="range"
@@ -86,6 +105,24 @@ import { ItemsStore } from '@store/word/items.store';
                 [value]="pitch()"
                 (input)="pitchChange($event)"
                 class="w-full h-2 bg-gray-100 rounded-full appearance-none cursor-pointer accent-purple-600" />
+            </div>
+
+            <!-- Auto Speak toggle -->
+            <div
+              class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100 mt-2">
+              <div class="flex flex-col">
+                <span class="text-xs font-bold text-gray-700">Reproducir al Tocar</span>
+                <span class="text-[10px] text-gray-400">Hablar cuando se pulsa un botón</span>
+              </div>
+              <button
+                (click)="layoutService.setAutoSpeakOnClick(!autoSpeakOnClick())"
+                class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                [class.bg-indigo-600]="autoSpeakOnClick()"
+                [class.bg-gray-300]="!autoSpeakOnClick()">
+                <div
+                  class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"
+                  [class.translate-x-6]="autoSpeakOnClick()"></div>
+              </button>
             </div>
           </div>
         </section>
@@ -115,7 +152,10 @@ import { ItemsStore } from '@store/word/items.store';
 
             <!-- Presets -->
             <div>
-              <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2.5 ml-1">Ajuste Rápido</label>
+              <label
+                class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2.5 ml-1"
+                >Ajuste Rápido</label
+              >
               <div class="grid grid-cols-3 gap-2">
                 @for (p of allPresets(); track p.id) {
                   <button
@@ -133,84 +173,162 @@ import { ItemsStore } from '@store/word/items.store';
               </div>
             </div>
 
-            <!-- Dimensions -->
+            <!-- Dimensions & Typography -->
             <div class="space-y-4 pt-1">
-              <!-- Width -->
-              <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Ancho de Botón</label>
-                  <span class="text-[10px] font-black text-gray-800">{{ buttonWidth() }}px</span>
-                </div>
-                <input
-                  type="range"
-                  min="80"
-                  max="350"
-                  [value]="buttonWidth()"
-                  (input)="layoutService.setButtonWidth(+$any($event.target).value)"
-                  class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
-              </div>
-
-              <!-- Height -->
-              <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Alto de Botón</label>
-                  <span class="text-[10px] font-black text-gray-800">{{ buttonHeight() }}px</span>
-                </div>
-                <input
-                  type="range"
-                  min="60"
-                  max="300"
-                  [value]="buttonHeight()"
-                  (input)="layoutService.setButtonHeight(+$any($event.target).value)"
-                  class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
-              </div>
-
-              <!-- Gap -->
-              <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Espaciado (Gap)</label>
-                  <span class="text-[10px] font-black text-gray-800">{{ gridGap() }}px</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="40"
-                  [value]="gridGap()"
-                  (input)="layoutService.setGridGap(+$any($event.target).value)"
-                  class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
-              </div>
-
-              <!-- Padding -->
-              <div>
-                <div class="flex justify-between items-center mb-1.5">
-                  <label class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1">Margen (Padding)</label>
-                  <span class="text-[10px] font-black text-gray-800">{{ gridPadding() }}px</span>
-                </div>
-                <input
-                  type="range"
-                  min="0"
-                  max="40"
-                  [value]="gridPadding()"
-                  (input)="layoutService.setGridPadding(+$any($event.target).value)"
-                  class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
-              </div>
-
-              <!-- Stretch to fill toggle -->
-              <div class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100">
-                <div class="flex flex-col">
-                  <span class="text-xs font-bold text-gray-700">Expander Botones</span>
-                  <span class="text-[10px] text-gray-400">Ocupar todo el ancho</span>
-                </div>
-                <button
-                  (click)="layoutService.setStretchToFill(!stretchToFill())"
-                  class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
-                  [class.bg-indigo-600]="stretchToFill()"
-                  [class.bg-gray-300]="!stretchToFill()">
-                  <div
-                    class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"
-                    [class.translate-x-6]="stretchToFill()">
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Width -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Ancho</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800">{{ buttonWidth() }}px</span>
                   </div>
-                </button>
+                  <input
+                    type="range"
+                    min="80"
+                    max="350"
+                    [value]="buttonWidth()"
+                    (input)="layoutService.setButtonWidth(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+
+                <!-- Height -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Alto</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800">{{ buttonHeight() }}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="60"
+                    max="300"
+                    [value]="buttonHeight()"
+                    (input)="layoutService.setButtonHeight(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Font Size -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Letra</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800"
+                      >{{ buttonFontSize() }}px</span
+                    >
+                  </div>
+                  <input
+                    type="range"
+                    min="8"
+                    max="40"
+                    [value]="buttonFontSize()"
+                    (input)="layoutService.setButtonFontSize(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+
+                <!-- Emoji Size -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Emoji</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800">{{ emojiSize() }}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="16"
+                    max="80"
+                    [value]="emojiSize()"
+                    (input)="layoutService.setEmojiSize(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+              </div>
+
+              <!-- Gap & Padding -->
+              <div class="grid grid-cols-2 gap-4">
+                <!-- Gap -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Gap</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800">{{ gridGap() }}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="40"
+                    [value]="gridGap()"
+                    (input)="layoutService.setGridGap(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+
+                <!-- Padding -->
+                <div>
+                  <div class="flex justify-between items-center mb-1.5">
+                    <label
+                      class="text-[10px] font-bold text-gray-400 uppercase tracking-widest ml-1"
+                      >Padding</label
+                    >
+                    <span class="text-[10px] font-black text-gray-800">{{ gridPadding() }}px</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="40"
+                    [value]="gridPadding()"
+                    (input)="layoutService.setGridPadding(+$any($event.target).value)"
+                    class="w-full h-1.5 bg-gray-100 rounded-full appearance-none cursor-pointer accent-indigo-500" />
+                </div>
+              </div>
+
+              <!-- Toggles Row -->
+              <div class="space-y-2 pt-2">
+                <!-- Stretch to fill toggle -->
+                <div
+                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold text-gray-700">Expander Botones</span>
+                    <span class="text-[10px] text-gray-400">Ocupar todo el ancho</span>
+                  </div>
+                  <button
+                    (click)="layoutService.setStretchToFill(!stretchToFill())"
+                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                    [class.bg-indigo-600]="stretchToFill()"
+                    [class.bg-gray-300]="!stretchToFill()">
+                    <div
+                      class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"
+                      [class.translate-x-6]="stretchToFill()"></div>
+                  </button>
+                </div>
+
+                <!-- Sentence Bar toggle -->
+                <div
+                  class="flex items-center justify-between bg-gray-50 rounded-2xl p-3 border border-gray-100">
+                  <div class="flex flex-col">
+                    <span class="text-xs font-bold text-gray-700">Barra de Oraciones</span>
+                    <span class="text-[10px] text-gray-400">Mostrar/Ocultar barra superior</span>
+                  </div>
+                  <button
+                    (click)="layoutService.setShowSentenceBar(!showSentenceBar())"
+                    class="w-12 h-6 rounded-full relative transition-colors duration-200 focus:outline-none"
+                    [class.bg-indigo-600]="showSentenceBar()"
+                    [class.bg-gray-300]="!showSentenceBar()">
+                    <div
+                      class="absolute top-1 left-1 bg-white w-4 h-4 rounded-full transition-transform duration-200"
+                      [class.translate-x-6]="showSentenceBar()"></div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -222,7 +340,9 @@ import { ItemsStore } from '@store/word/items.store';
         <div class="flex items-center justify-between">
           <div>
             <h4 class="text-sm font-bold text-gray-800 mb-1">Zona Peligrosa</h4>
-            <p class="text-[11px] text-gray-400">Restablecer todos los botones a su estado original</p>
+            <p class="text-[11px] text-gray-400">
+              Restablecer todos los botones a su estado original
+            </p>
           </div>
 
           @if (!showResetConfirm()) {
@@ -259,7 +379,7 @@ import { ItemsStore } from '@store/word/items.store';
       border: 3px solid currentColor;
       border-radius: 50%;
       cursor: pointer;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
   `,
 })
@@ -280,14 +400,22 @@ export class Config {
   protected readonly allPresets = this.layoutService.allPresets;
   protected readonly buttonWidth = this.layoutService.buttonWidth;
   protected readonly buttonHeight = this.layoutService.buttonHeight;
+  protected readonly buttonFontSize = this.layoutService.buttonFontSize;
+  protected readonly emojiSize = this.layoutService.emojiSize;
   protected readonly gridGap = this.layoutService.gridGap;
   protected readonly gridPadding = this.layoutService.gridPadding;
   protected readonly stretchToFill = this.layoutService.stretchToFill;
+  protected readonly showSentenceBar = this.layoutService.showSentenceBar;
+  protected readonly autoSpeakOnClick = this.layoutService.autoSpeakOnClick;
 
   protected showResetConfirm = signal(false);
 
   goBack() {
     this.location.back();
+  }
+
+  testVoice() {
+    this.speechService.speak('Esta es una prueba de configuración de voz para Doña.');
   }
 
   confirmReset() {
