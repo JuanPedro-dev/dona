@@ -11,40 +11,42 @@ import { ItemsStore } from '@store/word/items.store';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [Navbar, RouterLink, CommonModule],
   template: `
-    <app-navbar />
+    <div class="h-screen flex flex-col bg-gray-50 overflow-hidden">
+      <app-navbar />
 
-    <div class="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
-      <!-- Header -->
-      <div class="flex items-center justify-between">
-        <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Opciones</h2>
-        <div class="flex items-center gap-4">
-          <button
-            routerLink="/"
-            class="group flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all active:scale-95 cursor-pointer">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="18"
-              height="18"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2.5"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              class="text-indigo-600 transition-transform group-hover:-translate-x-1">
-              <path d="m15 18-6-6 6-6" />
-            </svg>
-            <span class="text-sm font-bold text-gray-700">Volver</span>
-          </button>
+      <main class="flex-1 overflow-y-auto">
+        <div class="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
+          <!-- Header -->
+          <div class="flex items-center justify-between">
+            <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Opciones</h2>
+            <div class="flex items-center gap-4">
+              <button
+                routerLink="/"
+                class="group flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all active:scale-95 cursor-pointer">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-indigo-600 transition-transform group-hover:-translate-x-1">
+                  <path d="m15 18-6-6 6-6" />
+                </svg>
+                <span class="text-sm font-bold text-gray-700">Volver</span>
+              </button>
 
-          <button
-            routerLink="/add-item"
-            class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95 cursor-pointer">
-            <span>➕</span>
-            <span>Agregar Palabra</span>
-          </button>
-        </div>
-      </div>
+              <button
+                routerLink="/add-item"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-2xl text-sm font-bold flex items-center gap-2 shadow-lg hover:shadow-xl transition-all active:scale-95 cursor-pointer">
+                <span>➕</span>
+                <span>Agregar Palabra</span>
+              </button>
+            </div>
+          </div>
 
       <!-- Control Cards -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -396,6 +398,8 @@ import { ItemsStore } from '@store/word/items.store';
           }
         </div>
       </section>
+        </div>
+      </main>
     </div>
   `,
   styles: `
