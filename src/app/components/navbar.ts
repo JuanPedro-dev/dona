@@ -1,8 +1,11 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
+import { LayoutService } from '@services/layout.service';
 
 @Component({
   selector: 'app-navbar',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [RouterLink],
   template: `
     <header
       class="bg-linear-to-r from-indigo-600 to-purple-600 text-white px-4 py-2.5 flex items-center justify-between shadow-lg">
@@ -21,8 +24,8 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
           </span>
         }
         <button
-          (click)="setIsSettingsOpen()"
-          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-90"
+          routerLink="/config"
+          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-95"
           title="Settings">
           ⚙️
         </button>
@@ -32,9 +35,6 @@ import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
   styles: ``,
 })
 export class Navbar {
-  isEditMode = signal(false);
-
-  setIsSettingsOpen() {
-    // Open Modal with options to edit the app, such as changing the theme, managing buttons, etc.
-  }
+  private readonly layoutService = inject(LayoutService);
+  isEditMode = this.layoutService.isEditMode;
 }

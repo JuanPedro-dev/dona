@@ -23,10 +23,10 @@ type ButtonLayout = {
   template: `
     <button
       type="button"
-      [class.grow]="layout().stretchToFill"
-      [class.w-full]="layout().stretchToFill"
-      [class.h-full]="layout().stretchToFill"
-      [style.width.px]="!layout().stretchToFill ? layout().minWidth : null"
+      [style.flex]="layout().stretchToFill ? '1 1 ' + (layout().minWidth || 0) + 'px' : '0 0 ' + (layout().minWidth || 0) + 'px'"
+      [style.width]="layout().stretchToFill ? '100%' : (layout().minWidth ? layout().minWidth + 'px' : 'auto')"
+      [style.min-width.px]="layout().minWidth"
+      [style.min-height.px]="layout().minHeight"
       [style.height.px]="layout().minHeight"
       (click)="handleClick()"
       (pointerdown)="handlePointerDown()"
