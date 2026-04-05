@@ -17,7 +17,7 @@ import { ItemsStore } from '@store/word/items.store';
       <main class="flex-1 overflow-y-auto">
         <div class="max-w-3xl mx-auto p-4 sm:p-6 space-y-6">
           <!-- Header -->
-          <div class="flex items-center justify-between">
+          <div class="flex flex-wrap items-center justify-between">
             <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Opciones</h2>
             <div class="flex items-center gap-4">
               <button
