@@ -2,8 +2,9 @@ import { Injectable } from '@angular/core';
 import type { Item } from 'src/core/libs/store/word/item.model';
 
 const DB_NAME = 'aac-board-db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'items';
+const PREFERENCES_STORE = 'preferences';
 
 @Injectable({ providedIn: 'root' })
 export class IndexedDbService {
@@ -19,12 +20,15 @@ export class IndexedDbService {
 
       request.onupgradeneeded = (event: IDBVersionChangeEvent) => {
         const db = (event.target as IDBOpenDBRequest).result;
+        
         if (!db.objectStoreNames.contains(STORE_NAME)) {
           const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' });
-          // Index to efficiently query by folderId
           store.createIndex('folderId', 'folderId', { unique: false });
-          // Index to efficiently query by type
           store.createIndex('type', 'type', { unique: false });
+        }
+
+        if (!db.objectStoreNames.contains(PREFERENCES_STORE)) {
+          db.createObjectStore(PREFERENCES_STORE);
         }
       };
 
@@ -175,6 +179,30 @@ export class IndexedDbService {
       const store = tx.objectStore(STORE_NAME);
       const request = store.clear();
       request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // ── Preferences ───────────────────────────────────────────────────
+
+  async savePreference<T>(key: string, value: T): Promise<void> {
+    const db = await this.openDB();
+    return new Promise<void>((resolve, reject) => {
+      const tx = db.transaction(PREFERENCES_STORE, 'readwrite');
+      const store = tx.objectStore(PREFERENCES_STORE);
+      const request = store.put(value, key);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getPreference<T>(key: string): Promise<T | undefined> {
+    const db = await this.openDB();
+    return new Promise<T | undefined>((resolve, reject) => {
+      const tx = db.transaction(PREFERENCES_STORE, 'readonly');
+      const store = tx.objectStore(PREFERENCES_STORE);
+      const request = store.get(key);
+      request.onsuccess = () => resolve(request.result as T);
       request.onerror = () => reject(request.error);
     });
   }

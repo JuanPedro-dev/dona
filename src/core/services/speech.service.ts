@@ -1,9 +1,11 @@
-import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID, effect } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { IndexedDbService } from './indexed-db.service';
 
 @Injectable({ providedIn: 'root' })
 export class SpeechService {
   private platformId = inject(PLATFORM_ID);
+  private db = inject(IndexedDbService);
 
   private _isSpeaking = signal(false);
   private _currentText = signal<string | null>(null);
@@ -23,9 +25,29 @@ export class SpeechService {
 
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
+      this.loadSettings();
       this.initVoices();
       // Voices can be loaded asynchronously
       window.speechSynthesis.onvoiceschanged = () => this.initVoices();
+
+      // Effect to persist changes
+      effect(() => {
+        const settings = {
+          rate: this._rate(),
+          pitch: this._pitch(),
+          selectedVoiceName: this._selectedVoiceName(),
+        };
+        this.db.savePreference('speech-settings', settings);
+      });
+    }
+  }
+
+  private async loadSettings() {
+    const saved = await this.db.getPreference<any>('speech-settings');
+    if (saved) {
+      if (saved.rate !== undefined) this._rate.set(saved.rate);
+      if (saved.pitch !== undefined) this._pitch.set(saved.pitch);
+      if (saved.selectedVoiceName !== undefined) this._selectedVoiceName.set(saved.selectedVoiceName);
     }
   }
 

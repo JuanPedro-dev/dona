@@ -1,4 +1,5 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject, effect } from '@angular/core';
+import { IndexedDbService } from './indexed-db.service';
 
 export interface LayoutPreset {
   id: string;
@@ -13,20 +14,12 @@ export interface LayoutPreset {
   stretchToFill: boolean;
 }
 
-export interface LayoutConfig {
-  minWidth: string;
-  padding: string;
-  borderRadius: string;
-  fontSize: string;
-  emojiSize: string;
-  gap: string;
-  gridTemplateColumns: string;
-}
-
 @Injectable({
   providedIn: 'root',
 })
 export class LayoutService {
+  private readonly db = inject(IndexedDbService);
+
   readonly isEditMode = signal(false);
 
   private readonly presets: LayoutPreset[] = [
@@ -122,8 +115,45 @@ export class LayoutService {
   readonly allPresets = computed(() => this.presets);
 
   constructor() {
-    // Sync initial state from default preset
-    this.setPreset('compact');
+    this.loadSettings();
+
+    // Effect to persist changes
+    effect(() => {
+      const settings = {
+        currentPresetId: this.currentPresetId(),
+        buttonWidth: this.buttonWidth(),
+        buttonHeight: this.buttonHeight(),
+        buttonBorderRadius: this.buttonBorderRadius(),
+        buttonFontSize: this.buttonFontSize(),
+        emojiSize: this.emojiSize(),
+        gridGap: this.gridGap(),
+        gridPadding: this.gridPadding(),
+        stretchToFill: this.stretchToFill(),
+        showSentenceBar: this.showSentenceBar(),
+        autoSpeakOnClick: this.autoSpeakOnClick(),
+      };
+      this.db.savePreference('layout-settings', settings);
+    });
+  }
+
+  private async loadSettings() {
+    const saved = await this.db.getPreference<any>('layout-settings');
+    if (saved) {
+      this.currentPresetId.set(saved.currentPresetId ?? 'compact');
+      this.buttonWidth.set(saved.buttonWidth ?? 160);
+      this.buttonHeight.set(saved.buttonHeight ?? 140);
+      this.buttonBorderRadius.set(saved.buttonBorderRadius ?? 24);
+      this.buttonFontSize.set(saved.buttonFontSize ?? 14);
+      this.emojiSize.set(saved.emojiSize ?? 32);
+      this.gridGap.set(saved.gridGap ?? 12);
+      this.gridPadding.set(saved.gridPadding ?? 12);
+      this.stretchToFill.set(saved.stretchToFill ?? false);
+      this.showSentenceBar.set(saved.showSentenceBar ?? true);
+      this.autoSpeakOnClick.set(saved.autoSpeakOnClick ?? false);
+    } else {
+      // Default initial state
+      this.setPreset('compact');
+    }
   }
 
   setPreset(id: string): void {
