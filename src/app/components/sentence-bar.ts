@@ -12,7 +12,7 @@ import { ItemsStore } from '@store/word/items.store';
       class="flex flex-wrap justify-end gap-2 bg-white border-b-2 border-gray-200 px-3 py-2 shadow-sm">
       <!-- Sentence display -->
       <div
-        class="basis-xs overflow-x-auto scrollbar-hide flex-1 min-h-13 bg-gray-50 rounded-xl px-4 py-2 flex justify-around gap-1 cursor-pointer border-2 border-gray-200 overflow-hidden"
+        class="basis-xs overflow-x-auto scrollbar-hide flex-1 min-h-13 bg-gray-50 rounded-xl px-4 py-2 flex gap-1 cursor-pointer border-2 border-gray-200 overflow-hidden"
         (click)="speakOrStop()"
         title="Toca para reproducir">
         @if (sentence().length === 0) {
