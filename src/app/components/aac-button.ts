@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { LayoutService } from '@services/layout.service';
+import { RouterLink } from '@angular/router';
 
 type AACButton = {
+  id: string;
   label: string;
   emoji: string;
   color: string;
@@ -19,12 +21,18 @@ type ButtonLayout = {
 @Component({
   selector: 'app-aac-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [RouterLink],
   template: `
     <button
       type="button"
-      [style.flex]="layout().stretchToFill ? '1 1 ' + (layout().minWidth || 0) + 'px' : '0 0 ' + (layout().minWidth || 0) + 'px'"
-      [style.width]="layout().stretchToFill ? '100%' : (layout().minWidth ? layout().minWidth + 'px' : 'auto')"
+      [style.flex]="
+        layout().stretchToFill
+          ? '1 1 ' + (layout().minWidth || 0) + 'px'
+          : '0 0 ' + (layout().minWidth || 0) + 'px'
+      "
+      [style.width]="
+        layout().stretchToFill ? '100%' : layout().minWidth ? layout().minWidth + 'px' : 'auto'
+      "
       [style.min-width.px]="layout().minWidth"
       [style.min-height.px]="layout().minHeight"
       [style.height.px]="layout().minHeight"
@@ -46,6 +54,7 @@ type ButtonLayout = {
       [style.border-radius.px]="layout().borderRadius">
       @if (isEditMode()) {
         <div
+          [routerLink]="['/edit-item', button().id]"
           class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md z-10">
           ✏️
         </div>

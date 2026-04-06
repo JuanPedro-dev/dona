@@ -16,7 +16,7 @@ export const routes: Routes = [
   },
   {
     path: 'edit-item/:id',
-    loadComponent: () => import('./pages/edit-item').then(m => m.EditItem),
+    loadComponent: () => import('./pages/edit-item/edit-item').then(m => m.EditItem),
   },
   {
     path: '**',
