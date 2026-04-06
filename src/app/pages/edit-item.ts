@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, effect, inject, input, OnInit, sign
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { ItemsStore } from '@store/word/items.store';
-import { EMOJI_OPTIONS, COLOR_OPTIONS } from '../add-item/add.model';
+import { EMOJI_OPTIONS, COLOR_OPTIONS } from './constants';
 import { ItemType, UpdateItemPayload } from '@store/word/item.model';
 import { ToastService } from '@services/toast.service';
 import { Navbar } from '@components/navbar';

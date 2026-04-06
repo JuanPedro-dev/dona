@@ -1,20 +1,39 @@
 export const COLOR_OPTIONS = [
-  '#ef4444',
-  '#f59e0b',
-  '#22c55e',
-  '#3b82f6',
-  '#6366f1',
-  '#8b5cf6',
-  '#ec4899',
-  '#14b8a6',
-  '#d97706',
-  '#6b7280',
-  '#0ea5e9',
-  '#84cc16',
-  '#f43f5e',
-  '#a855f7',
-  '#06b6d4',
+  // Rojos
+  '#ef4444', '#dc2626', '#b91c1c',
+
+  // Naranjas / Ámbar
+  '#f59e0b', '#d97706', '#b45309',
+
+  // Amarillos (controlados para contraste)
+  '#eab308', '#ca8a04',
+
+  // Verdes
+  '#22c55e', '#16a34a', '#15803d',
+
+  // Teal / Cyan
+  '#14b8a6', '#0d9488', '#06b6d4', '#0891b2',
+
+  // Azules
+  '#3b82f6', '#2563eb', '#1d4ed8', '#0ea5e9',
+
+  // Indigo / Violeta
+  '#6366f1', '#4f46e5', '#4338ca',
+  '#8b5cf6', '#7c3aed', '#6d28d9',
+
+  // Rosas / Fucsia
+  '#ec4899', '#db2777', '#be185d',
+  '#f43f5e', '#e11d48',
+
+  // Neutros (importantes para AAC)
+  '#6b7280', '#4b5563', '#374151',
+  '#9ca3af', '#d1d5db',
+
+  // Extras útiles
+  '#84cc16', '#65a30d', // lima
+  '#f97316', '#ea580c', // naranja fuerte
 ];
+
 
 export const EMOJI_OPTIONS = [
   // Caritas y emociones

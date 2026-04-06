@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
-import { EMOJI_OPTIONS, COLOR_OPTIONS } from './add.model';
+import { EMOJI_OPTIONS, COLOR_OPTIONS } from './constants';
 import { CreateItemPayload, ItemType } from '@store/word/item.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Navbar } from '@components/navbar';
@@ -35,17 +35,21 @@ import { ToastService } from '@services/toast.service';
             <div class="md:col-span-1">
               <div
                 class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex flex-col items-center gap-4 sticky top-0">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vista Previa</p>
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">
+                  Vista Previa
+                </p>
                 <div
                   class="w-32 h-32 rounded-3xl flex flex-col items-center justify-center shadow-xl transition-all duration-300"
                   [style.background-color]="bgValue()">
                   <span class="text-5xl drop-shadow-sm">{{ emojiValue() || '❓' }}</span>
-                  <span class="mt-2 text-sm font-black text-white px-2 text-center leading-tight truncate w-full">
+                  <span
+                    class="mt-2 text-sm font-black text-white px-2 text-center leading-tight truncate w-full">
                     {{ labelValue() || 'Texto' }}
                   </span>
                 </div>
                 <p class="text-[10px] text-gray-400 text-center leading-relaxed">
-                  Así es como se verá tu {{ typeValue() === 'button' ? 'botón' : 'categoría' }} en el tablero.
+                  Así es como se verá tu {{ typeValue() === 'button' ? 'botón' : 'categoría' }} en
+                  el tablero.
                 </p>
               </div>
             </div>
@@ -56,10 +60,10 @@ import { ToastService } from '@services/toast.service';
                 [formGroup]="form"
                 (ngSubmit)="save()"
                 class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-5">
-                
                 <!-- Type Selection (Segmented Control) -->
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                  <label
+                    class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
                     ¿Qué quieres crear?
                   </label>
                   <div class="flex bg-gray-100 p-1 rounded-2xl w-full">
@@ -88,8 +92,12 @@ import { ToastService } from '@services/toast.service';
 
                 <!-- Label -->
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1" for="label">
-                    {{ typeValue() === 'button' ? 'Texto de la palabra' : 'Nombre de la categoría' }}
+                  <label
+                    class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1"
+                    for="label">
+                    {{
+                      typeValue() === 'button' ? 'Texto de la palabra' : 'Nombre de la categoría'
+                    }}
                   </label>
                   <input
                     id="label"
@@ -99,14 +107,17 @@ import { ToastService } from '@services/toast.service';
                     class="w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:outline-none text-gray-700 bg-gray-50/50 transition-colors"
                     [class.border-red-200]="labelCtrl.invalid && labelCtrl.touched" />
                   @if (labelCtrl.touched && labelCtrl.hasError('required')) {
-                    <p class="text-[10px] font-bold text-red-500 mt-1 ml-1">El nombre es obligatorio.</p>
+                    <p class="text-[10px] font-bold text-red-500 mt-1 ml-1">
+                      El nombre es obligatorio.
+                    </p>
                   }
                 </div>
 
                 <!-- Folder / Category Selection - Only for buttons -->
                 @if (typeValue() === 'button') {
                   <div>
-                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                    <label
+                      class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
                       Ubicación (Carpeta)
                     </label>
                     <div class="flex flex-wrap gap-2">
@@ -131,7 +142,8 @@ import { ToastService } from '@services/toast.service';
 
                 <!-- Color Selection -->
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                  <label
+                    class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
                     Color de Fondo
                   </label>
                   <div class="flex flex-wrap gap-2.5">
@@ -146,7 +158,8 @@ import { ToastService } from '@services/toast.service';
                         [class.scale-110]="bgValue() === color"
                         [attr.aria-label]="'Seleccionar color ' + color"></button>
                     }
-                    <div class="relative w-10 h-10 rounded-xl border-2 border-gray-100 overflow-hidden bg-white group shadow-sm">
+                    <div
+                      class="relative w-10 h-10 rounded-xl border-2 border-gray-100 overflow-hidden bg-white group shadow-sm">
                       <input
                         type="color"
                         [value]="bgValue()"
@@ -158,10 +171,12 @@ import { ToastService } from '@services/toast.service';
 
                 <!-- Emoji Selection -->
                 <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                  <label
+                    class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
                     Icono (Emoji)
                   </label>
-                  <div class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-1 bg-gray-50/50 rounded-2xl border border-gray-100">
+                  <div
+                    class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-1 bg-gray-50/50 rounded-2xl border border-gray-100">
                     @for (em of emojiOptions; track em) {
                       <button
                         type="button"
@@ -235,14 +250,26 @@ export class AddItem {
   });
 
   // Getters for preview
-  protected typeValue() { return this.form.controls.type.value; }
-  protected labelValue() { return this.form.controls.label.value; }
-  protected emojiValue() { return this.form.controls.emoji.value; }
-  protected bgValue() { return this.form.controls.backgroundColor.value; }
-  protected folderIdValue() { return this.form.controls.folderId.value; }
+  protected typeValue() {
+    return this.form.controls.type.value;
+  }
+  protected labelValue() {
+    return this.form.controls.label.value;
+  }
+  protected emojiValue() {
+    return this.form.controls.emoji.value;
+  }
+  protected bgValue() {
+    return this.form.controls.backgroundColor.value;
+  }
+  protected folderIdValue() {
+    return this.form.controls.folderId.value;
+  }
 
   // Control helpers
-  get labelCtrl() { return this.form.controls.label; }
+  get labelCtrl() {
+    return this.form.controls.label;
+  }
 
   setType(type: ItemType) {
     this.form.controls.type.setValue(type);
@@ -274,7 +301,9 @@ export class AddItem {
     const { type, label, emoji, backgroundColor, folderId } = this.form.getRawValue();
 
     // Calculate order based on existing items in that folder/root
-    const itemsInLocation = this.itemsStore.items().filter(i => i.folderId === folderId && i.type === type);
+    const itemsInLocation = this.itemsStore
+      .items()
+      .filter(i => i.folderId === folderId && i.type === type);
     const nextOrder = itemsInLocation.length;
 
     const payload: CreateItemPayload = {
@@ -289,7 +318,9 @@ export class AddItem {
 
     try {
       await this.itemsStore.addItem(payload);
-      this.toastService.success(type === 'button' ? 'Palabra agregada exitosamente.' : 'Categoría agregada exitosamente.');
+      this.toastService.success(
+        type === 'button' ? 'Palabra agregada exitosamente.' : 'Categoría agregada exitosamente.',
+      );
 
       this.router.navigate(['/']);
     } catch (error) {

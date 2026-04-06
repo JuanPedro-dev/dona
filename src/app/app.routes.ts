@@ -8,15 +8,15 @@ export const routes: Routes = [
   },
   {
     path: 'config',
-    loadComponent: () => import('./pages/config/config').then(m => m.Config),
+    loadComponent: () => import('./pages/config').then(m => m.Config),
   },
   {
     path: 'add-item',
-    loadComponent: () => import('./pages/add-item/add-item').then(m => m.AddItem),
+    loadComponent: () => import('./pages/add-item').then(m => m.AddItem),
   },
   {
     path: 'edit-item/:id',
-    loadComponent: () => import('./pages/edit-item/edit-item').then(m => m.EditItem),
+    loadComponent: () => import('./pages/edit-item').then(m => m.EditItem),
   },
   {
     path: '**',
