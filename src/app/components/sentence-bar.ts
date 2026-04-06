@@ -14,7 +14,7 @@ import { ItemsStore } from '@store/word/items.store';
       <div
         class="basis-xs overflow-x-auto scrollbar-hide flex-1 min-h-13 bg-gray-50 rounded-xl px-4 py-2 flex justify-around gap-1 cursor-pointer border-2 border-gray-200 overflow-hidden"
         (click)="speakOrStop()"
-        title="Tap to speak sentence">
+        title="Toca para reproducir">
         @if (sentence().length === 0) {
           <span class="text-gray-400 text-lg select-none">
             Haz click en los botones para construir una oración...
@@ -41,7 +41,7 @@ import { ItemsStore } from '@store/word/items.store';
             'bg-indigo-600 text-white hover:bg-indigo-700 active:scale-95 shadow-md':
               sentence().length > 0 && !isSpeaking(),
           }"
-          title="Speak sentence">
+          title="Reproducir oración">
           {{ isSpeaking() ? '⏸️' : '▶️' }}
         </button>
 
@@ -51,7 +51,7 @@ import { ItemsStore } from '@store/word/items.store';
           [disabled]="sentence().length === 0"
           class="shrink-0 w-13 h-13 rounded-xl bg-amber-500 text-white flex items-center justify-center text-2xl
         hover:bg-amber-600 active:scale-95 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-md"
-          title="Delete last word">
+          title="Borrar última palabra">
           ⌫
         </button>
 
@@ -61,7 +61,7 @@ import { ItemsStore } from '@store/word/items.store';
           [disabled]="sentence().length === 0"
           class="shrink-0 w-13 h-13 rounded-xl bg-red-500 text-white flex items-center justify-center text-2xl
         hover:bg-red-600 active:scale-95 transition-all disabled:bg-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed shadow-md"
-          title="Clear sentence">
+          title="Limpiar oración">
           🗑️
         </button>
       </div>
