@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
 import { EMOJI_OPTIONS, COLOR_OPTIONS } from './add.model';
-import { CreateItemPayload } from '@store/word/item.model';
+import { CreateItemPayload, ItemType } from '@store/word/item.model';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Navbar } from '@components/navbar';
 import { Router, RouterLink } from '@angular/router';
@@ -16,10 +16,12 @@ import { ToastService } from '@services/toast.service';
       <app-navbar />
 
       <main class="flex-1 overflow-y-auto">
-        <div class="max-w-2xl mx-auto p-4 sm:p-6 space-y-6">
+        <div class=" p-4 sm:p-6 space-y-6">
           <!-- Header -->
           <div class="flex items-center justify-between">
-            <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">Nueva Palabra</h2>
+            <h2 class="text-2xl font-extrabold text-gray-900 tracking-tight">
+              Añadir {{ typeValue() === 'button' ? 'Palabra' : 'Categoría' }}
+            </h2>
             <button
               routerLink="/config"
               class="group flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all active:scale-95 cursor-pointer">
@@ -43,7 +45,7 @@ import { ToastService } from '@services/toast.service';
                   </span>
                 </div>
                 <p class="text-[10px] text-gray-400 text-center leading-relaxed">
-                  Así es como se verá tu botón en el tablero.
+                  Así es como se verá tu {{ typeValue() === 'button' ? 'botón' : 'categoría' }} en el tablero.
                 </p>
               </div>
             </div>
@@ -55,16 +57,45 @@ import { ToastService } from '@services/toast.service';
                 (ngSubmit)="save()"
                 class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 space-y-5">
                 
+                <!-- Type Selection (Segmented Control) -->
+                <div>
+                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1">
+                    ¿Qué quieres crear?
+                  </label>
+                  <div class="flex bg-gray-100 p-1 rounded-2xl w-full">
+                    <button
+                      type="button"
+                      (click)="setType('button')"
+                      class="flex-1 py-2 px-4 rounded-xl text-sm font-bold transition-all cursor-pointer"
+                      [class.bg-white]="typeValue() === 'button'"
+                      [class.shadow-sm]="typeValue() === 'button'"
+                      [class.text-indigo-600]="typeValue() === 'button'"
+                      [class.text-gray-500]="typeValue() !== 'button'">
+                      Palabra
+                    </button>
+                    <button
+                      type="button"
+                      (click)="setType('folder')"
+                      class="flex-1 py-2 px-4 rounded-xl text-sm font-bold transition-all cursor-pointer"
+                      [class.bg-white]="typeValue() === 'folder'"
+                      [class.shadow-sm]="typeValue() === 'folder'"
+                      [class.text-indigo-600]="typeValue() === 'folder'"
+                      [class.text-gray-500]="typeValue() !== 'folder'">
+                      Categoría
+                    </button>
+                  </div>
+                </div>
+
                 <!-- Label -->
                 <div>
                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-1.5 ml-1" for="label">
-                    Texto de la palabra
+                    {{ typeValue() === 'button' ? 'Texto de la palabra' : 'Nombre de la categoría' }}
                   </label>
                   <input
                     id="label"
                     type="text"
                     formControlName="label"
-                    placeholder="Ej: Quiero agua"
+                    [placeholder]="typeValue() === 'button' ? 'Ej: Quiero agua' : 'Ej: Comida'"
                     class="w-full px-4 py-3 rounded-2xl border-2 border-gray-100 focus:border-indigo-400 focus:outline-none text-gray-700 bg-gray-50/50 transition-colors"
                     [class.border-red-200]="labelCtrl.invalid && labelCtrl.touched" />
                   @if (labelCtrl.touched && labelCtrl.hasError('required')) {
@@ -72,29 +103,31 @@ import { ToastService } from '@services/toast.service';
                   }
                 </div>
 
-                <!-- Folder / Category -->
-                <div>
-                  <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
-                    Ubicación (Carpeta)
-                  </label>
-                  <div class="flex flex-wrap gap-2">
-                    @for (folder of categories(); track folder.id) {
-                      <button
-                        type="button"
-                        (click)="setFolder(folder.id)"
-                        class="px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center gap-1.5"
-                        [class.bg-indigo-600]="folderIdValue() === folder.id"
-                        [class.border-indigo-600]="folderIdValue() === folder.id"
-                        [class.text-white]="folderIdValue() === folder.id"
-                        [class.bg-white]="folderIdValue() !== folder.id"
-                        [class.border-gray-100]="folderIdValue() !== folder.id"
-                        [class.text-gray-500]="folderIdValue() !== folder.id">
-                        <span>{{ folder.emoji }}</span>
-                        <span>{{ folder.label }}</span>
-                      </button>
-                    }
+                <!-- Folder / Category Selection - Only for buttons -->
+                @if (typeValue() === 'button') {
+                  <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
+                      Ubicación (Carpeta)
+                    </label>
+                    <div class="flex flex-wrap gap-2">
+                      @for (folder of categories(); track folder.id) {
+                        <button
+                          type="button"
+                          (click)="setFolder(folder.id)"
+                          class="px-4 py-2 rounded-xl text-xs font-bold border-2 transition-all cursor-pointer flex items-center gap-1.5"
+                          [class.bg-indigo-600]="folderIdValue() === folder.id"
+                          [class.border-indigo-600]="folderIdValue() === folder.id"
+                          [class.text-white]="folderIdValue() === folder.id"
+                          [class.bg-white]="folderIdValue() !== folder.id"
+                          [class.border-gray-100]="folderIdValue() !== folder.id"
+                          [class.text-gray-500]="folderIdValue() !== folder.id">
+                          <span>{{ folder.emoji }}</span>
+                          <span>{{ folder.label }}</span>
+                        </button>
+                      }
+                    </div>
                   </div>
-                </div>
+                }
 
                 <!-- Color Selection -->
                 <div>
@@ -128,7 +161,7 @@ import { ToastService } from '@services/toast.service';
                   <label class="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 ml-1">
                     Icono (Emoji)
                   </label>
-                  <div class="grid grid-cols-6 sm:grid-cols-8 gap-2 max-h-48 overflow-y-auto p-1 bg-gray-50/50 rounded-2xl border border-gray-100">
+                  <div class="flex flex-wrap gap-2 max-h-48 overflow-y-auto p-1 bg-gray-50/50 rounded-2xl border border-gray-100">
                     @for (em of emojiOptions; track em) {
                       <button
                         type="button"
@@ -194,13 +227,15 @@ export class AddItem {
 
   // Form initialization
   protected form = this.fb.group({
+    type: ['button' as ItemType],
     label: ['', [Validators.required, Validators.maxLength(20)]],
     emoji: ['😊'],
     backgroundColor: [COLOR_OPTIONS[3] ?? '#3b82f6', [Validators.required]],
-    folderId: [this.categories()[0]?.id ?? 'folder-core', [Validators.required]],
+    folderId: [this.categories()[0]?.id ?? 'folder-core'],
   });
 
   // Getters for preview
+  protected typeValue() { return this.form.controls.type.value; }
   protected labelValue() { return this.form.controls.label.value; }
   protected emojiValue() { return this.form.controls.emoji.value; }
   protected bgValue() { return this.form.controls.backgroundColor.value; }
@@ -208,6 +243,15 @@ export class AddItem {
 
   // Control helpers
   get labelCtrl() { return this.form.controls.label; }
+
+  setType(type: ItemType) {
+    this.form.controls.type.setValue(type);
+    if (type === 'folder') {
+      this.form.controls.folderId.setValue(null);
+    } else {
+      this.form.controls.folderId.setValue(this.categories()[0]?.id ?? 'folder-core');
+    }
+  }
 
   setEmoji(em: string) {
     this.form.controls.emoji.setValue(em);
@@ -227,25 +271,25 @@ export class AddItem {
       return;
     }
 
-    const { label, emoji, backgroundColor, folderId } = this.form.getRawValue();
+    const { type, label, emoji, backgroundColor, folderId } = this.form.getRawValue();
 
     // Calculate order based on existing items in that folder/root
-    const itemsInLocation = this.itemsStore.items().filter(i => i.folderId === folderId);
+    const itemsInLocation = this.itemsStore.items().filter(i => i.folderId === folderId && i.type === type);
     const nextOrder = itemsInLocation.length;
 
     const payload: CreateItemPayload = {
-      type: 'button',
+      type: type!,
       label: label!,
       emoji: emoji!,
       backgroundColor: backgroundColor!,
       textColor: '#ffffff',
-      folderId: folderId,
+      folderId: type === 'folder' ? null : folderId,
       order: nextOrder,
     };
 
     try {
       await this.itemsStore.addItem(payload);
-      this.toastService.success('Palabra agregada exitosamente.');
+      this.toastService.success(type === 'button' ? 'Palabra agregada exitosamente.' : 'Categoría agregada exitosamente.');
 
       this.router.navigate(['/']);
     } catch (error) {
