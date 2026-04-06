@@ -110,7 +110,7 @@ export class LayoutService {
 
   // New application logic toggles
   readonly showSentenceBar = signal(true);
-  readonly autoSpeakOnClick = signal(false);
+  readonly autoSpeakOnClick = signal(true);
 
   readonly allPresets = computed(() => this.presets);
 
@@ -149,7 +149,7 @@ export class LayoutService {
       this.gridPadding.set(saved.gridPadding ?? 12);
       this.stretchToFill.set(saved.stretchToFill ?? false);
       this.showSentenceBar.set(saved.showSentenceBar ?? true);
-      this.autoSpeakOnClick.set(saved.autoSpeakOnClick ?? false);
+      this.autoSpeakOnClick.set(saved.autoSpeakOnClick ?? true);
     } else {
       // Default initial state
       this.setPreset('compact');
