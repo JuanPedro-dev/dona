@@ -9,7 +9,7 @@ import { LayoutService } from '@services/layout.service';
   template: `
     <header
       class="bg-indigo-600 text-white px-4 py-2.5 flex items-center justify-between shadow-lg">
-      <div class="flex items-center gap-2.5" routerLink="/">
+      <div class="flex items-center gap-2.5 cursor-pointer" routerLink="/">
         <span class="text-2xl">💬</span>
         <div>
           <h1 class="text-lg font-extrabold tracking-tight leading-none">Habla Conmigo</h1>
@@ -26,7 +26,7 @@ import { LayoutService } from '@services/layout.service';
         }
         <button
           routerLink="/config"
-          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-95"
+          class="w-10 h-10 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-xl transition-all active:scale-95 cursor-pointer"
           title="Settings">
           ⚙️
         </button>
