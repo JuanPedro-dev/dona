@@ -1,10 +1,11 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { ChangeDetectionStrategy, Component, effect, inject, signal } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 import { Navbar } from '@components/navbar';
 import { LayoutService } from '@services/layout.service';
 import { SpeechService } from '@services/speech.service';
 import { ItemsStore } from '@store/word/items.store';
+import { ToastService } from '@services/toast.service';
 
 @Component({
   selector: 'app-config',
@@ -420,6 +421,7 @@ export class Config {
   private readonly speechService = inject(SpeechService);
   private readonly itemsStore = inject(ItemsStore);
   protected readonly layoutService = inject(LayoutService);
+  private readonly router = inject(Router);
 
   // Derived from services
   protected readonly voices = this.speechService.voices;
@@ -441,14 +443,50 @@ export class Config {
   protected readonly autoSpeakOnClick = this.layoutService.autoSpeakOnClick;
 
   protected showResetConfirm = signal(false);
+  private readonly toastService = inject(ToastService);
+  private toastTimer: any;
+  private isInitialLoad = true;
+
+  constructor() {
+    effect(() => {
+      // Track all setting signals
+      this.selectedVoiceName();
+      this.rate();
+      this.pitch();
+      this.buttonWidth();
+      this.buttonHeight();
+      this.buttonFontSize();
+      this.emojiSize();
+      this.gridGap();
+      this.gridPadding();
+      this.stretchToFill();
+      this.showSentenceBar();
+      this.autoSpeakOnClick();
+
+      if (this.isInitialLoad) {
+        this.isInitialLoad = false;
+        return;
+      }
+
+      if (this.toastTimer) clearTimeout(this.toastTimer);
+      this.toastTimer = setTimeout(() => {
+        this.toastService.success('Los cambios se actualizaron correctamente', {
+          title: 'Configuración',
+        });
+      }, 2000);
+    });
+  }
 
   testVoice() {
     this.speechService.speak('Esta es una prueba de configuración de voz.');
   }
 
-  confirmReset() {
-    this.itemsStore.resetToDefaults();
+  async confirmReset() {
+    await this.itemsStore.resetToDefaults();
     this.showResetConfirm.set(false);
+    this.toastService.success('El tablero ha vuelto a su estado original', {
+      title: 'Restablecido',
+    });
   }
 
   selectedVoiceChange(event: Event) {
@@ -468,5 +506,6 @@ export class Config {
 
   toggleEditMode() {
     this.layoutService.toggleEditMode();
+    this.router.navigate(['/']);
   }
 }

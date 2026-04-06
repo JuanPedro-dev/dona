@@ -23,7 +23,7 @@ import { ToastService } from '@services/toast.service';
               Añadir {{ typeValue() === 'button' ? 'Palabra' : 'Categoría' }}
             </h2>
             <button
-              routerLink="/config"
+              routerLink="/"
               class="group flex items-center gap-2 bg-white px-4 py-2 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all active:scale-95 cursor-pointer">
               <span class="text-sm font-bold text-gray-700">Volver</span>
             </button>
