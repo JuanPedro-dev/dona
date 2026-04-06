@@ -33,7 +33,7 @@ export class LayoutService {
       emojiSize: 24,
       gridGap: 8,
       gridPadding: 8,
-      stretchToFill: false,
+      stretchToFill: true,
     },
     {
       id: 'default',

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { LayoutService } from '@services/layout.service';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 type AACButton = {
   id: string;
@@ -21,7 +21,6 @@ type ButtonLayout = {
 @Component({
   selector: 'app-aac-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink],
   template: `
     <button
       type="button"
@@ -54,7 +53,6 @@ type ButtonLayout = {
       [style.border-radius.px]="layout().borderRadius">
       @if (isEditMode()) {
         <div
-          [routerLink]="['/edit-item', button().id]"
           class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md z-10">
           ✏️
         </div>
@@ -76,6 +74,8 @@ type ButtonLayout = {
 })
 export class AacButton {
   private readonly layoutService = inject(LayoutService);
+  private readonly router = inject(Router);
+
   isEditMode = this.layoutService.isEditMode;
   button = input.required<AACButton>();
   layout = input<ButtonLayout>({});
@@ -103,7 +103,7 @@ export class AacButton {
 
   handleClick() {
     if (this.isEditMode()) {
-      this.longPress.emit(this.button());
+      this.router.navigate(['/edit-item', this.button().id]);
     } else {
       this.tap.emit(this.button().label);
     }

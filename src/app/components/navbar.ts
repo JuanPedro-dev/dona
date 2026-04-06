@@ -8,7 +8,7 @@ import { LayoutService } from '@services/layout.service';
   imports: [RouterLink],
   template: `
     <header
-      class="bg-linear-to-r from-indigo-600 to-purple-600 text-white px-4 py-2.5 flex items-center justify-between shadow-lg">
+      class="bg-indigo-600 text-white px-4 py-2.5 flex items-center justify-between shadow-lg">
       <div class="flex items-center gap-2.5" routerLink="/">
         <span class="text-2xl">💬</span>
         <div>
@@ -19,7 +19,7 @@ import { LayoutService } from '@services/layout.service';
       <div class="flex items-center gap-2">
         @if (isEditMode()) {
           <span
-          (click)="disableEditMode()" 
+            (click)="disableEditMode()"
             class="bg-yellow-400 text-yellow-900 text-xs font-bold px-2.5 py-1 rounded-full animate-pulse">
             SALIR DEL MODO EDITAR
           </span>

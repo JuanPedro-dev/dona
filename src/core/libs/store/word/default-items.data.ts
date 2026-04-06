@@ -89,67 +89,7 @@ const RAW_DEFAULT_ITEMS: RawSeedItem[] = [
     order: 7,
   },
 
-  // Quick Phrases
-  {
-    id: 'btn-hello',
-    type: 'button',
-    label: 'Hola',
-    emoji: '👋',
-    backgroundColor: '#3b82f6',
-    textColor: '#111827',
-    folderId: null,
-    order: 8,
-  },
-  {
-    id: 'btn-yes',
-    type: 'button',
-    label: 'Sí',
-    emoji: '✅',
-    backgroundColor: '#ef4444',
-    textColor: '#111827',
-    folderId: null,
-    order: 9,
-  },
-  {
-    id: 'btn-no',
-    type: 'button',
-    label: 'No',
-    emoji: '❌',
-    backgroundColor: '#6b7280',
-    textColor: '#111827',
-    folderId: null,
-    order: 10,
-  },
-  {
-    id: 'btn-help',
-    type: 'button',
-    label: 'Ayuda',
-    emoji: '🆘',
-    backgroundColor: '#22c55e',
-    textColor: '#111827',
-    folderId: null,
-    order: 11,
-  },
-  {
-    id: 'btn-thanks',
-    type: 'button',
-    label: 'Gracias',
-    emoji: '🙏',
-    backgroundColor: '#f59e0b',
-    textColor: '#111827',
-    folderId: null,
-    order: 12,
-  },
-  {
-    id: 'btn-please',
-    type: 'button',
-    label: 'Por favor',
-    emoji: '🥺',
-    backgroundColor: '#ec4899',
-    textColor: '#111827',
-    folderId: null,
-    order: 13,
-  },
+
 
   // Core Words
   {

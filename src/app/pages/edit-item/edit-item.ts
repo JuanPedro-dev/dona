@@ -328,7 +328,7 @@ export class EditItem implements OnInit {
     try {
       await this.itemsStore.updateItem(payload);
       this.toastService.success('Actualizado correctamente');
-      this.router.navigate(['/config']);
+      this.router.navigate(['/']);
     } catch (error) {
       this.toastService.error('Error al actualizar');
     }
@@ -341,7 +341,7 @@ export class EditItem implements OnInit {
     try {
       await this.itemsStore.deleteItem(id);
       this.toastService.success('Eliminado correctamente');
-      this.router.navigate(['/config']);
+      this.router.navigate(['/']);
     } catch (error) {
       this.toastService.error('Error al eliminar');
     } finally {
