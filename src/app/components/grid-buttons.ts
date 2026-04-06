@@ -18,6 +18,7 @@ import { AacButton } from './aac-button';
           (click)="selectWord(word.label)"
           [class.grow]="layoutService.stretchToFill()"
           [button]="{
+            id: word.id,
             label: word.label,
             emoji: word.emoji ? word.emoji : '',
             color: word.backgroundColor,

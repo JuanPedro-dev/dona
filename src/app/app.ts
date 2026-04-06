@@ -1,14 +1,15 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+
+import { Toast } from '@components/toast';
 
 @Component({
   selector: 'app-root',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, Toast],
   template: `
-    <div class="h-screen bg-gray-50">
-      <router-outlet />
-    </div>
+    <app-toast />
+    <router-outlet />
   `,
   styles: ``,
 })

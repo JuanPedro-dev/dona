@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { LayoutService } from '@services/layout.service';
+import { Router } from '@angular/router';
 
 type AACButton = {
+  id: string;
   label: string;
   emoji: string;
   color: string;
@@ -19,12 +21,17 @@ type ButtonLayout = {
 @Component({
   selector: 'app-aac-button',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
   template: `
     <button
       type="button"
-      [style.flex]="layout().stretchToFill ? '1 1 ' + (layout().minWidth || 0) + 'px' : '0 0 ' + (layout().minWidth || 0) + 'px'"
-      [style.width]="layout().stretchToFill ? '100%' : (layout().minWidth ? layout().minWidth + 'px' : 'auto')"
+      [style.flex]="
+        layout().stretchToFill
+          ? '1 1 ' + (layout().minWidth || 0) + 'px'
+          : '0 0 ' + (layout().minWidth || 0) + 'px'
+      "
+      [style.width]="
+        layout().stretchToFill ? '100%' : layout().minWidth ? layout().minWidth + 'px' : 'auto'
+      "
       [style.min-width.px]="layout().minWidth"
       [style.min-height.px]="layout().minHeight"
       [style.height.px]="layout().minHeight"
@@ -67,6 +74,8 @@ type ButtonLayout = {
 })
 export class AacButton {
   private readonly layoutService = inject(LayoutService);
+  private readonly router = inject(Router);
+
   isEditMode = this.layoutService.isEditMode;
   button = input.required<AACButton>();
   layout = input<ButtonLayout>({});
@@ -94,7 +103,7 @@ export class AacButton {
 
   handleClick() {
     if (this.isEditMode()) {
-      this.longPress.emit(this.button());
+      this.router.navigate(['/edit-item', this.button().id]);
     } else {
       this.tap.emit(this.button().label);
     }

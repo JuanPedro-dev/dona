@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ItemsStore } from '@store/word/items.store';
+import { RouterLink } from '@angular/router';
+import { LayoutService } from '@services/layout.service';
 
 @Component({
   selector: 'app-category-tabs',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [],
+  imports: [RouterLink],
   template: `
     <div
       class="flex gap-1.5 px-3 py-2 bg-gray-100 border-b border-gray-200 overflow-x-auto scrollbar-hide">
@@ -22,6 +24,15 @@ import { ItemsStore } from '@store/word/items.store';
           [class.border]="activeCategory() !== cat?.id"
           [class.border-gray-200]="activeCategory() !== cat?.id"
           [style.background-color]="activeCategory() === cat?.id ? cat?.backgroundColor : null">
+          @if (isEditMode()) {
+            <div
+              (click)="$event.stopPropagation()"
+              [routerLink]="['/edit-item', cat?.id]"
+              class="absolute -top-1.5 -right-1.5 w-6 h-6 bg-indigo-600 text-white rounded-full flex items-center justify-center text-xs font-bold shadow-md z-10">
+              ✏️
+            </div>
+          }
+
           <span class="text-lg">{{ cat.emoji }}</span>
           <span>{{ cat.label }}</span>
         </button>
@@ -32,7 +43,9 @@ import { ItemsStore } from '@store/word/items.store';
 })
 export class CategoryTabs {
   protected readonly itemsStore = inject(ItemsStore);
+  protected readonly layoutService = inject(LayoutService);
 
+  protected readonly isEditMode = this.layoutService.isEditMode;
   protected readonly categories = this.itemsStore.rootFolders;
   protected readonly activeCategory = this.itemsStore.selectedFolderId;
 

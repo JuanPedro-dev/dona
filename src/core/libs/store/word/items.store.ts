@@ -39,7 +39,7 @@ interface ItemsState {
 
 const initialState: ItemsState = {
   items: [],
-  selectedFolderId: null,
+  selectedFolderId: 'folder-core',
   isLoading: false,
   error: null,
   wordAdded: false,
@@ -200,7 +200,7 @@ export const ItemsStore = signalStore(
           patchState(store, {
             items: defaults,
             isLoading: false,
-            selectedFolderId: null,
+            selectedFolderId: 'folder-core',
           });
         } catch (error) {
           setError(error);
@@ -255,6 +255,10 @@ export const ItemsStore = signalStore(
        * If the item is a folder, also deletes all its children.
        */
       async deleteItem(id: string): Promise<void> {
+        if (id === 'folder-core') {
+          patchState(store, { error: 'No se puede eliminar la categoría principal.' });
+          return;
+        }
         patchState(store, { error: null, wordDeleted: false });
 
         const target = store.itemMap().get(id);
@@ -281,7 +285,7 @@ export const ItemsStore = signalStore(
             items: store.items().filter(i => !deletedSet.has(i.id)),
             wordDeleted: true,
             // If we deleted the currently open folder, go home
-            selectedFolderId: store.selectedFolderId() === id ? null : store.selectedFolderId(),
+            selectedFolderId: store.selectedFolderId() === id ? 'folder-core' : store.selectedFolderId(),
           });
         } catch (error) {
           setError(error);
