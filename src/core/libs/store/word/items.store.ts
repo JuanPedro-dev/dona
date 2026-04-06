@@ -133,11 +133,7 @@ export const ItemsStore = signalStore(
 
       /** Navigate into a folder */
       selectFolder(folderId: string): void {
-        if(store.selectedFolderId() === folderId) {
-          patchState(store, { selectedFolderId: null });
-        } else {
-          patchState(store, { selectedFolderId: folderId });
-        }
+        patchState(store, { selectedFolderId: folderId });
       },
 
       /** Go back to the home/root screen */
