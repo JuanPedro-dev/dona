@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, input, output, signal } from '@angular/core';
 import { LayoutService } from '@services/layout.service';
 import { Router } from '@angular/router';
 
@@ -39,6 +39,7 @@ type ButtonLayout = {
       (pointerdown)="handlePointerDown()"
       (pointerup)="handlePointerUp()"
       (pointerleave)="handlePointerUp()"
+      [attr.aria-label]="isEditMode() ? 'Editar ' + button().label : button().label"
       class="relative flex flex-col items-center justify-center p-2 transition-all duration-100 select-none shadow-lg hover:shadow-xl"
       [class.scale-90]="pressed()"
       [class.brightness-90]="pressed()"
@@ -75,6 +76,7 @@ type ButtonLayout = {
 export class AacButton {
   private readonly layoutService = inject(LayoutService);
   private readonly router = inject(Router);
+  private readonly destroyRef = inject(DestroyRef);
 
   isEditMode = this.layoutService.isEditMode;
   button = input.required<AACButton>();
@@ -86,6 +88,12 @@ export class AacButton {
   pressed = signal(false);
   private timer: ReturnType<typeof setTimeout> | null = null;
 
+  constructor() {
+    this.destroyRef.onDestroy(() => {
+      this._clearTimer();
+    });
+  }
+
   handlePointerDown() {
     this.pressed.set(true);
     this.timer = setTimeout(() => {
@@ -95,6 +103,10 @@ export class AacButton {
 
   handlePointerUp() {
     this.pressed.set(false);
+    this._clearTimer();
+  }
+
+  private _clearTimer() {
     if (this.timer) {
       clearTimeout(this.timer);
       this.timer = null;
