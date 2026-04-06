@@ -10,6 +10,21 @@ import { LayoutService } from '@services/layout.service';
   template: `
     <div
       class="flex gap-1.5 px-3 py-2 bg-gray-100 border-b border-gray-200 overflow-x-auto scrollbar-hide">
+      <button
+        type="button"
+        (click)="handleSelect('all')"
+        class="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all"
+        [class.text-white]="activeCategory() === 'all'"
+        [class.bg-indigo-600]="activeCategory() === 'all'"
+        [class.shadow-lg]="activeCategory() === 'all'"
+        [class.bg-white]="activeCategory() !== 'all'"
+        [class.text-gray-600]="activeCategory() !== 'all'"
+        [class.border]="activeCategory() !== 'all'"
+        [class.border-gray-200]="activeCategory() !== 'all'">
+        <span class="text-lg">🌟</span>
+        <span>Todas</span>
+      </button>
+
       @for (cat of categories(); track cat.id) {
         <button
           type="button"

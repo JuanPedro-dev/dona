@@ -39,7 +39,7 @@ interface ItemsState {
 
 const initialState: ItemsState = {
   items: [],
-  selectedFolderId: 'folder-core',
+  selectedFolderId: 'all',
   isLoading: false,
   error: null,
   wordAdded: false,
@@ -76,11 +76,16 @@ export const ItemsStore = signalStore(
     ),
 
     /** All button items at root level (quick-phrase buttons), sorted by order */
-    words: computed(() =>
-      items()
-        .filter(i => i.type === 'button' && i.folderId === selectedFolderId())
-        .sort((a, b) => a.order - b.order),
-    ),
+    words: computed(() => {
+      const folderId = selectedFolderId();
+      if (folderId === 'all') {
+        return items()
+          .filter(i => i.type === 'button').sort((a, b) => (a.folderId ?? '').localeCompare(b.folderId ?? ''))
+      }
+      return items()
+        .filter(i => i.type === 'button' && i.folderId === folderId)
+        .sort((a, b) => a.order - b.order);
+    }),
 
     /** Items that belong to the currently selected folder, sorted by order */
     currentFolderItems: computed(() => {
