@@ -37,7 +37,7 @@ export class LayoutService {
     },
     {
       id: 'default',
-      name: 'Default',
+      name: 'Estándar',
       buttonWidth: 160,
       buttonHeight: 140,
       buttonBorderRadius: 24,
